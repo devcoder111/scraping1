@@ -1,0 +1,62 @@
+.qaPopupWrapper {
+    z-index: 1000202; 
+    position: fixed;
+    top: 100px;
+    width: 100%;
+    max-width: 984px;
+}
+div.qs-popup {
+    font-size: 90%;
+    background-color:#fff;
+    margin: 0 auto;
+    max-width: 370px;
+    z-index:1000202;
+}
+div.qs-popup div.qs-header {
+    position: relative;
+    color: #58595b;
+    background: #eee;
+}
+div.qs-popup div.qs-body {
+    padding: 24px;
+}
+
+div.qs-popup div.qs-link {
+    padding: 24px 0 0;
+    float: right;
+}
+div.qs-popup div.qs-link a {
+    display:inline-block;
+    padding: .3em;
+    color: #fff;
+    text-decoration:none;
+}
+h1.modal__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 24px;
+    color: #58595b;
+}
+.modal-backdrop.modal-backdrop--open {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000201;
+    background: rgba(51,51,51,.95);
+}
+button.btn.modal__close {
+    color: #58595b;
+    background-color: transparent;
+    position: absolute;
+    top: 7px;
+    right: 0;
+    background: transparent;
+    border: none;
+    padding: 8px 13px;
+}
+@media (max-width: 480px) {
+    div.qs-popup {max-width: 300px;}
+}

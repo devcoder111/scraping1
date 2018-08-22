@@ -1,0 +1,132 @@
+(function($j, window) {
+	$j(function() {
+
+		function isEditMode() {
+			return $j('body').hasClass('cq-wcm-edit');
+		}
+
+		function isIE7() {
+			return $j('html').hasClass('msie-7');
+		}
+
+		function isChrome() {
+			return $j('html').hasClass('chrome');
+		}
+
+		function isSafari() {
+			return $j('html').hasClass('safari');
+		}
+
+		function isOpera() {
+			return $j('html').hasClass('opera');
+		}
+
+		function isMsie() {
+			return $j('html').hasClass('msie');
+		}
+
+		function isMobile() {
+			return $j('html').hasClass('cmeResponsive');
+		}
+		
+		function getExtraOffset() {
+			var $pineappleHeader = $j('.cmePineappleHeader'),
+                $legendaryNav = $j('.cmeLegendaryNav');
+
+            var offsetTop = $pineappleHeader.length
+                ? $legendaryNav.length
+                    ? $pineappleHeader.height() + $legendaryNav.height()
+                    : $pineappleHeader.height()
+                : 0;
+
+            return offsetTop;
+        }
+
+		function checkScroll() {
+			var $el = $j(this),
+				offset = $el.offset(),
+				extraOffset = getExtraOffset(),
+				scrollTop = $j(window).scrollTop(),
+				$floatingHeader = $el.find('.cmeFloatingHeader');
+			if ((scrollTop > offset.top - extraOffset) && (scrollTop < offset.top - extraOffset + $el.height())) {
+				$floatingHeader.css({"visibility": "visible", "display":"inline" });
+			} else {
+				$floatingHeader.css({"visibility": "hidden", "display":"none" });
+			}
+		}
+
+		function setUpScrollListener() {
+			var that = this;
+			$j(window).scroll(function() {
+				checkScroll.call(that);
+			}).trigger("scroll");
+		}
+
+		function getHeader() { // if the first tr has only th's and no td's, that is the header
+			var $tr = $j(this).find('tr');
+			if ($tr.length && !$j($tr[0]).find('td').length && $j($tr[0]).find('th').length) {
+				return $tr[0];
+			}
+		}
+
+		function cloneHeaderRow(headerRow) {
+			var $headerRow = $j(headerRow)
+			var $before = $headerRow.clone();
+			$before.css("width", $headerRow.width()).addClass("cmeFloatingHeader");
+			$j('th', $headerRow).each(function(i) {
+				var $headerCell = $j(this);
+				if ($headerCell.css("borderCollapse") === "collapse") {
+					borderWidth = parseInt($headerCell.css("borderLeftWidth"),10);
+				} else {
+					borderWidth = parseInt($headerCell.css("borderLeftWidth"),10) + parseInt($headerCell.css("borderRightWidth"),10);
+				}
+				cellWidth = (
+					isChrome() ||
+					isSafari() ||
+					isOpera() ||
+					isMsie() ? $headerCell.width() + borderWidth : $headerCell.width());
+				$before.find('th').eq(i).css({ 'width':cellWidth, 'min-width':cellWidth });
+			});
+			$headerRow.parent().prepend($before);
+		}
+
+		function addFixedHeader() {
+			var header = getHeader.call(this);
+			if (header) {
+				cloneHeaderRow.call(this, header);
+				setUpScrollListener.call(this); 
+				return this;
+			} else {
+				return this;
+			}
+		}
+
+		function addFixedHeaders() {
+			if (!isEditMode() && !isIE7() && !isMobile()) {
+				var selector = 'table.cmeContentTableFixedHeading, table.cmeDataTableFixedHeading';
+				return $j(selector, this).each(function() {
+					addFixedHeader.call(this);
+				});
+			}
+			return this;
+		}
+
+		if (!$j.fn.cmeText) {
+			$j.fn.extend({
+				cmeText: function(options) {
+					if ($j(this).attr('data-initialized') === 'true' ) {
+						return this;
+					} else {
+						$j(this).attr('data-initialized', 'true')
+						return addFixedHeaders.call(this);
+					}
+				}
+			});
+		}
+
+		// Call the plugin constructor for each .cmeText div
+		$j('#cmePageContentArea').find('.cmeText').each(function() {
+			$j(this).cmeText();
+		});
+	});
+})(jQuery, window);

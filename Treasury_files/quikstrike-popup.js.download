@@ -1,0 +1,68 @@
+(function($) {
+    $.fn.allowQS = function(options) {
+
+        var settings = $.extend({}, $.fn.allowQS.defaults, options);
+
+        this.hide();
+        var rootUrl = document.location.protocol + "//" + settings.qsHost + "/";
+        var ajaxUrl = rootUrl + "AjaxPages/AccessVerificationService.aspx/";
+        var popup = this;
+
+        if (!$(popup)[0].hasAttribute('class')) {
+            popup.addClass('qs-popup');
+            $('head').append('<link rel="stylesheet" href="/content/dam/cmegroup/files/css/quikstrikePopUp.css" type="text/css" />');
+        }
+        $j.ajax({
+            type: 'GET',
+            cache: false,
+            url: ajaxUrl + 'SubmitVerificationTest',
+            xhrFields: {
+                withCredentials: true
+            }, //  Send cookies
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+                $j.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: ajaxUrl + 'DidVerificationSucceed',
+                    xhrFields: {
+                        withCredentials: true
+                    }, //  Send cookies
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(result) {
+                        if (!result.d) {
+                            popup.html('<div class="qs-header">\
+                                            <h1 class="modal__title">Attention</h1>\
+                                        </div>\
+                                        <div class="qs-body cmeClearContent">\
+                                          Please accept cookies in order to view this tool. Cookies help CME Group to enrich your use of our website by improving your experience. You have the right to accept the use of cookies or you can access our <a href="http://www.cmegroup.com/cookie-policy.html">Cookie Policy</a> for more information on how to modify your cookie preference.<div class="qs-link"><a id="agree" class="cmeButton cmeButtonPrimary" href="' + rootUrl + 'Public/GrantAccess.aspx?ret=' + window.location.href + '">Accept</a></div>\
+                                        </div>');
+                            popup.show();
+                            $j(".modal-backdrop").addClass("modal-backdrop--open");
+                        }
+                    }
+                    // do nothing on error because older broswers do not support CORS in which case we do not necessarily want to display an error
+                    //error: function (result) { alert('error submitting'); }
+                });
+            }
+            //error: function (result) { alert('error verifying'); }
+        });
+
+        return this;
+    };
+
+    // Plugin defaults – added as a property on our plugin function.
+    $.fn.allowQS.defaults = {
+        qsHost: "cmegroup-tools.quikstrike.net"
+
+    };
+    $('#agree').on('click', function() {
+        $('modal-backdrop').removeClass('modal-backdrop--open');
+    });
+
+}(jQuery));
+$(document).ready(function() {
+    $('#qsPopup').allowQS({
+        qsHost: "cmegroup-tools.quikstrike.net"
+    });
+});

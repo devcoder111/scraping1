@@ -1,0 +1,64 @@
+var cmeWebsite = cmeWebsite || {};
+cmeWebsite.components = cmeWebsite.components || {};
+cmeWebsite.components.equalHeights = (function() {
+	var lastWindowWidth = 0;
+	var windowResizeEqHTimer;
+	
+	var getResizeTimer = function(){
+		return windowResizeEqHTimer;
+	};
+	var setResizeTimer = function(value){
+		windowResizeEqHTimer = value;
+	};
+	var clearResizeTimer = function(){
+		clearTimeout(windowResizeEqHTimer);
+	};
+	var equalHeightColumnsDesignBoxes = function() {
+		if (!$j('html').hasClass('cme-ie7')){
+			if (!$j('html').hasClass('cme-display-xSmall')){
+			    $j('.cmeEqualHeightRow, .cmeEqualHeightColumnWrapper .cmeThreeColsContainer').each(function() {
+                    var $thisRow = $j(this),
+                        minHeight = _.max($j('.cmeCol, .cmeEqualHeightCol', $thisRow).map((i, col) => $j(col).height()));
+
+                    $j(".cmeStandardDesignBox", $thisRow).animate({"min-height": 0}, "fast", function(){
+                        $j(".cmeStandardDesignBox", $thisRow).animate({"min-height": minHeight}, "fast");
+                    });
+                    $j(".cmeBoxContent", $thisRow).animate({"min-height": 0}, "fast", function(){
+                        $j(".cmeBoxContent", $thisRow).animate({"min-height": minHeight}, "fast");
+                    });
+                    
+                    if ($thisRow.hasClass('cmeThreeColsContainer')) {
+                        $j(".cmeCol", $thisRow).animate({"min-height": 0 }, "fast", function(){
+                            $j(".cmeCol", $thisRow).animate({"min-height": minHeight}, "fast");
+                        });
+                    }
+                });
+			}
+			else {
+				$j('.cmeEqualHeightRow').each(function() {
+					var thisRow = $j(this);
+					$j(".cmeStandardDesignBox",thisRow).animate({ "min-height": 0 }, "fast");
+					$j(".cmeBoxContent",thisRow).animate({ "min-height": 0 }, "fast");
+				});
+			}
+		}
+	};
+	return {
+		equalHeightColumnsDesignBoxes: equalHeightColumnsDesignBoxes,
+		getResizeTimer : getResizeTimer,
+		setResizeTimer : setResizeTimer,
+		clearResizeTimer : clearResizeTimer
+	};
+
+})();
+
+$j(document).ready(function() {
+	cmeWebsite.components.equalHeights.equalHeightColumnsDesignBoxes();
+	$j(window).on("resize", function(){
+		var myModule = cmeWebsite.components.equalHeights;
+		myModule.clearResizeTimer();
+		myModule.setResizeTimer(setTimeout(function(){
+			myModule.equalHeightColumnsDesignBoxes();
+		}, 1000));
+	});
+});

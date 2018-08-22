@@ -1,0 +1,1519 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0112)https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&insid=11012123 -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <meta name="viewport" content="">
+    <title>QuikStrike - Treasury Strike as Yield</title>
+<link rel="shortcut icon" href="https://cmegroup-tools.quikstrike.net/Images/Icons/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="./reset-fonts-grids.css" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./base-min.css" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./bantix-base.css" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./jquery-ui.css" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./superfish-custom.css" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./shadowbox.css" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./layout.less" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./default.less" type="text/css" media="screen, print, projection">
+
+<link rel="stylesheet" href="./NavigationBars.less" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./OptionMatrix.less" type="text/css" media="screen, print, projection">
+<link rel="stylesheet" href="./Wizard.less" type="text/css" media="screen, print, projection">
+
+
+<script type="text/javascript" async="" src="./ga.js.download"></script><script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-22000245-3']);
+    _gaq.push(['_setDomainName', 'quikstrike.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function ()
+    {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+
+
+         
+        <script src="./jquery-3.1.0.min.js.download" type="text/javascript"></script>
+        <script src="./jquery-ui.min.js.download" type="text/javascript"></script>
+   
+    <script src="./jquery.sparkline.min.js.download" type="text/javascript"></script>
+    <script src="./json2.js.download" type="text/javascript"></script>
+    <script src="./hoverIntent.js.download" type="text/javascript"></script>
+    <script src="./superfish.js.download" type="text/javascript"></script>
+    <script src="./jquery.tablehover.min.js.download" type="text/javascript"></script>
+
+    
+<link href="./WebResource.axd" type="text/css" rel="stylesheet"><style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style></head>
+<body id="body">
+    <form method="post" action="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123" id="Form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTE3ODc1NDE0MTNkGI0BBT5jdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjSG9tZQ8UKwACZAL/////D2QFM2N0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDkkY3RsMDAkbHZFeHBpcmF0aW9ucw8UKwAOZGRkZGRkZDwrAAkAAglkZGRmAv////8PZAVOY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJFBpY2tlclZpZXc1DxQrAAJkAv////8PZAUUY3RsMDAkdWNTaG9ydGN1dE1lbnUPFCsAAmQC/////w9kBS9jdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdIZWFkZXIkdWNMYW5kaW5nRGVmYXVsdA8UKwACZAL/////D2QFEGN0bDAwJHVjQ2hhcnRUaXAPFCsAAmQC/////w9kBRBjdGwwMCR1Y0l0ZXJhdG9yDxQrAAJkAv////8PZAVTY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1RyZWFzdXJ5UGlja2VyJGx2RW50aXRpZXMPFCsADmRkZGRkZGQ8KwAGAAIGZGRkZgL/////D2QFTmN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNEYXRlUmFuZ2VQaWNrZXIkZHBUbw8UKwADZAYAAHYXitzVCAUJNi8yOC8yMDE4ZAUlY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsNCRjdGwwMA8UKwACZAL/////D2QFIWN0bDAwJE1haW5Db250ZW50JHVjUG9wdXBTcGxhc2hlcg8UKwACZAL/////D2QFEmN0bDAwJGNsb2NrQ2hpY2Fnbw8UKwACZALU/f//D2QFM2N0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyR0eHRGdXR1cmVQcmljZQ8UKwACFCsAAmRlKClbU3lzdGVtLkRlY2ltYWwsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OQEwZAV7Y3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1N1bW1hcnkkdWNUcmVhc3VyeVN1bW1hcnlUYWJsZSRsdlRyZWFzdXJpZXMkY3RybDQkdWNGdXR1cmVUcmlnZ2VyDxQrAAJkAv////8PZAV7Y3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1N1bW1hcnkkdWNUcmVhc3VyeVN1bW1hcnlUYWJsZSRsdlRyZWFzdXJpZXMkY3RybDMkdWNGdXR1cmVUcmlnZ2VyDxQrAAJkAv////8PZAUQY3RsMDAkdWNQb3B1cFRpcA8UKwACZAL/////D2QFSGN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNUcmVhc3VyeVBpY2tlcg8UKwACZAL/////D2QFSGN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNQaWNrZXJNRCR2aWV3NQ8UKwACZAL/////D2QFM2N0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDYkY3RsMDAkbHZFeHBpcmF0aW9ucw8UKwAOZGRkZGRkZBQrAANkZGQCA2RkZGYC/////w9kBQ9jdGwwMCR1Y01lbnVCYXIPFCsAAmQC/////w9kBSVjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmw4JGN0bDAwDxQrAAJkAv////8PZAUTY3RsMDAkdWNJRnJhbWVQb3B1cA8UKwACZAL/////D2QFF2N0bDAwJHVjUXVpa1Rvb2xzJGN0bDAwDxQrAAJkAv////8PZAVIY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJHZpZXc5DxQrAAJkAv////8PZAUlY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsMSRjdGwwMA8UKwACZAL/////D2QFJGN0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scw8UKwAFFCsAAmQC/////w9lZmhoZAVJY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJHZpZXcxMA8UKwACZAL/////D2QFGWN0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMPFCsADmRkZGRkZGQ8KwANAAINZGRkZgL/////D2QFTGN0bDAwJHVjTWVudUJhciRsdk1lbnVCYXIkY3RybDAkY3RsMDAkbHZNZW51Q2F0ZWdvcnkkY3RybDAkY3RsMDAkbHZNZW51R3JvdXAPFCsADmRkZGRkZGQ8KwAqAAIqZGRkZgL/////D2QFKmN0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyRjdGwwMQ8UKwACZAL/////D2QFJGN0bDAwJHVjUXVpa1Rvb2xzJHVjUVMkU3VwcG9ydFBvcHVwMQ8UKwACZAL/////D2QFTmN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNQaWNrZXJNRCRQaWNrZXJWaWV3Mg8UKwACZAL/////D2QFJmN0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDExJGN0bDAwDxQrAAJkAv////8PZAUQY3RsMDAkdWNTZWxlY3Rvcg8UKwACZAL/////D2QFG2N0bDAwJHVjUXVpa01lbnUkbHZRdWlrTWVudQ88KwAOAwhmDGYNAv////8PZAUqY3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJGN0bDA1DxQrAAJkAv////8PZAVCY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1F1aWtNZW51DxQrAAJkAv////8PZAVAY3RsMDAkdWNNZW51QmFyJGx2TWVudUJhciRjdHJsMCRjdGwwMCRsdk1lbnVDYXRlZ29yeSRjdHJsMCRjdGwwMA8UKwACZAL/////D2QFe2N0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNTdW1tYXJ5JHVjVHJlYXN1cnlTdW1tYXJ5VGFibGUkbHZUcmVhc3VyaWVzJGN0cmwwJHVjRnV0dXJlVHJpZ2dlcg8UKwACZAL/////D2QFDWN0bDAwJHVjQ2FsYzIPFCsAAmQC/////w9kBSVjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmwyJGN0bDAwDxQrAAJkAv////8PZAU9Y3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJHR4dEZ1dHVyZUZ1dHVyZVNsaWRlU2l6ZQ8UKwACFCsAAmRlKCsEATBkBRVjdGwwMCR1Y01haW5OYXZSaWJib24PFCsAAmQC/////w9kBVJjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjVHJlYXN1cnlQaWNrZXIkdWNUcmlnZ2VyDxQrAAJkAv////8PZAUlY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsNyRjdGwwMA8UKwACZAL/////D2QFM2N0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDgkY3RsMDAkbHZFeHBpcmF0aW9ucw8UKwAOZGRkZGRkZDwrAAkAAglkZGRmAv////8PZAU1Y3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJHR4dFZvbFNsaWRlU3RlcHMPFCsAAhQrAAJkZSgrBAEwZAU0Y3RsMDAkdWNNZW51QmFyJGx2TWVudUJhciRjdHJsMCRjdGwwMCRsdk1lbnVDYXRlZ29yeQ8UKwAOZGRkZGRkZBQrAAFkAgFkZGRmAv////8PZAVOY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJFBpY2tlclZpZXcxDxQrAAJkAv////8PZAVAY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlcg8UKwACZAL/////D2QFTWN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNQb3B1cFRhYnMkdWNUcmlnZ2VyDxQrAAJkAv////8PZAUZY3RsMDAkdWNNZW51QmFyJGx2TWVudUJhcg8UKwAOZGRkZGRkZBQrAAFkAgFkZGRmAv////8PZAVIY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJHZpZXc3DxQrAAJkAv////8PZAU/Y3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1R3ZWV0DxQrAAJkAv////8PZAUlY3RsMDAkdWNTaG9ydGN1dE1lbnUkdWNTaG9ydGN1dEFkZE5ldw8UKwACZAL/////D2QFD2N0bDAwJHVjRnV0dXJlcw8UKwACZAL/////D2QFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYHBVBjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjRGF0ZVJhbmdlUGlja2VyJGRwRnJvbQVOY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y0RhdGVSYW5nZVBpY2tlciRkcFRvBSxjdGwwMCR1Y1BvcHVwQWNjb3VudE1lbnUkbHNMb2dpblN0YXR1cyRjdGwwMQUsY3RsMDAkdWNQb3B1cEFjY291bnRNZW51JGxzTG9naW5TdGF0dXMkY3RsMDMFGGN0bDAwJHVjSXRlcmF0b3IkYnRuUHJldgUYY3RsMDAkdWNJdGVyYXRvciRidG5OZXh0BRljdGwwMCRjdGwwNSRyZWZyZXNoQnV0dG9uBUVjdGwwMCRNYWluQ29udGVudCR1Y0FuYWx5c2lzQ29udHJvbHMkdWNQcmljaW5nQ2hhcnRTZXR0aW5ncyR1Y1RyaWdnZXIPFCsAAmQC/////w9kBRZjdGwwMCR1Y1F1aWtUb29scyR1Y1FTDxQrAAJkAv////8PZAUzY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsNSRjdGwwMCRsdkV4cGlyYXRpb25zDxQrAA5kZGRkZGRkFCsAA2RkZAIDZGRkZgL/////D2QFUGN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNEYXRlUmFuZ2VQaWNrZXIkZHBGcm9tDxQrAANkBgAAddk+lNUIBQkzLzI4LzIwMThkBSVjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmw5JGN0bDAwDxQrAAJkAv////8PZAUeY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3SGVhZGVyDxQrAAJkBQExZAUVY3RsMDAkdWNJbnN0YW50QWxlcnRzDxQrAAJkAv////8PZAUmY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsMTAkY3RsMDAPFCsAAmQC/////w9kBUhjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjUGlja2VyTUQkdmlldzEPFCsAAmQC/////w9kBU5jdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjUGlja2VyTUQkUGlja2VyVmlldzMPFCsAAmQC/////w9kBTFjdGwwMCRNYWluQ29udGVudCR1Y0FuYWx5c2lzQ29udHJvbHMkdWNTdHJpa2VNb2RlDxQrABkUKwACZAL/////D2VlZWhoaGhoZWhoaGhoaGhoaGhoaGhoaGQFJWN0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDUkY3RsMDAPFCsAAmQC/////w9kBT5jdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJGx2VGFicw8UKwAOZGRkZGRkZDwrAAYAAgZkZGRmAv////8PZAUuY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3SGVhZGVyJHVjRnV0dXJlVHJpZ2dlcg8UKwACZAL/////D2QFNWN0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyR0eHRUaW1lU2xpZGVTaXplDxQrAAIUKwACZGUoKwQBMGQFJmN0bDAwJE1haW5Db250ZW50JHVjVmlld0hlYWRlciR1Y1R3ZWV0DxQrAAJkAv////8PZAUOY3RsMDAkdWNOb3RpY2UPFCsAAmQC/////w9kBSBjdGwwMCR1Y1F1aWtUb29scyR1Y1FTJHVjU2F2ZVBkZg8UKwACZAL/////D2QFQWN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNTdW1tYXJ5DxQrAAJkAv////8PZAUwY3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJGx2Vm9sQ3VydmVzDzwrAA4DCGYMZg0C/////w9kBSRjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdIZWFkZXIkY3RsMDIPFCsAAmQC/////w9kBRFjdGwwMCR1Y1F1aWtUb29scw8UKwACZAL/////D2QFEWN0bDAwJHVjTGVhcm5Nb3JlDxQrAAJkAv////8PZAU4Y3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJHR4dEZ1dHVyZVNsaWRlU3RlcHMPFCsAAhQrAAJkZSgrBAEwZAUXY3RsMDAkdWNDb21wYXJlRWRpdGlvbnMPFCsAAmQC/////w9kBTNjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmwxJGN0bDAwJGx2RXhwaXJhdGlvbnMPFCsADmRkZGRkZGQ8KwAEAAIEZGRkZgL/////D2QFNmN0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyR0eHRUaW1lU2xpZGVTdGVwcw8UKwACFCsAAmRlKCsEATBkBXtjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjU3VtbWFyeSR1Y1RyZWFzdXJ5U3VtbWFyeVRhYmxlJGx2VHJlYXN1cmllcyRjdHJsMiR1Y0Z1dHVyZVRyaWdnZXIPFCsAAmQC/////w9kBSVjdGwwMCR1Y01lbnVCYXIkbHZNZW51QmFyJGN0cmwwJGN0bDAwDxQrAAJkAv////8PZAUgY3RsMDAkdWNNYWluTmF2UmliYm9uJGx2U2VjdGlvbnMPFCsADmRkZGRkZGQUKwADZGRkAgNkZGRmAv////8PZAUoY3RsMDAkdWNTaG9ydGN1dE1lbnUkdWNTaG9ydGN1dEdyb3VwTGlzdA8UKwACZAL/////D2QFEmN0bDAwJHVjQ2FsY3VsYXRvcg8UKwACZAL/////D2QFZWN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNTdW1tYXJ5JHVjVHJlYXN1cnlTdW1tYXJ5VGFibGUkbHZUcmVhc3VyaWVzDxQrAA5kZGRkZGRkPCsABgACBmRkZGYC/////w9kBSZjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmwxMiRjdGwwMA8UKwACZAL/////D2QFO2N0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyR1Y1ByaWNpbmdDaGFydFNldHRpbmdzDxQrAAJkAv////8PZAU0Y3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsMTEkY3RsMDAkbHZFeHBpcmF0aW9ucw8UKwAOZGRkZGRkZDwrAAkAAglkZGRmAv////8PZAVYY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1N1bW1hcnkkdWNUcmVhc3VyeVN1bW1hcnlUYWJsZQ8UKwACZAL/////D2QFNGN0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDEyJGN0bDAwJGx2RXhwaXJhdGlvbnMPFCsADmRkZGRkZGQ8KwAGAAIGZGRkZgL/////D2QFM2N0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDMkY3RsMDAkbHZFeHBpcmF0aW9ucw8UKwAOZGRkZGRkZDwrAAQAAgRkZGRmAv////8PZAVcY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y0RhdGVSYW5nZVBpY2tlciR1Y0RhdGVSYW5nZVRyaWdnZXIPFCsAAmQC/////w9kBTNjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmw0JGN0bDAwJGx2RXhwaXJhdGlvbnMPFCsADmRkZGRkZGQUKwADZGRkAgNkZGRmAv////8PZAVIY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJHZpZXc4DxQrAAJkAv////8PZAU5Y3RsMDAkdWNTaG9ydGN1dE1lbnUkdWNTaG9ydGN1dEdyb3VwTGlzdCRsdlNob3J0Y3V0R3JvdXBzDzwrAA4DCGYMZg0C/////w9kBTRjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmwxMCRjdGwwMCRsdkV4cGlyYXRpb25zDxQrAA5kZGRkZGRkPCsACQACCWRkZGYC/////w9kBSVjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmwwJGN0bDAwDxQrAAJkAv////8PZAUVY3RsMDAkRm9vdGVyMSR1Y1ZpZXdzDxQrAAJkAv////8PZAVOY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJFBpY2tlclZpZXc2DxQrAAJkAv////8PZAUyY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3SGVhZGVyJHVjRXhwaXJhdGlvblRyaWdnZXIPFCsAAmQC/////w9kBRBjdGwwMCR1Y1F1aWtNZW51DxQrAAJkAv////8PZAUzY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsNyRjdGwwMCRsdkV4cGlyYXRpb25zDxQrAA5kZGRkZGRkPCsACQACCWRkZGYC/////w9kBRFjdGwwMCRjbG9ja0xvbmRvbg8UKwACZAI8ZAU9Y3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCRjdGwwMA8UKwACZAL/////D2QFMmN0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyR0eHRWb2xhdGlsaXR5DxQrAAIUKwACZGUoKwQBMGQFH2N0bDAwJHVjTWFpbk5hdlJpYmJvbiR1Y1F1aWtFZHUPFCsAAmQC/////w9kBQZfX1BhZ2UPFCsAAmQy3AQAAQAAAP////8BAAAAAAAAAAQBAAAA4gFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5EaWN0aW9uYXJ5YDJbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV0sW1N5c3RlbS5PYmplY3QsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dAwAAAAdWZXJzaW9uCENvbXBhcmVyCEhhc2hTaXplAAMACJIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuR2VuZXJpY0VxdWFsaXR5Q29tcGFyZXJgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0IAAAAAAkCAAAAAAAAAAQCAAAAkgFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5HZW5lcmljRXF1YWxpdHlDb21wYXJlcmAxW1tTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXQAAAAALZAUnY3RsMDAkdWNRdWlrVG9vbHMkdWNRUyR1Y0NvbnRhY3RTdXBwb3J0DxQrAAJkAv////8PZAUrY3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJHVjSG9tZQ8UKwACZAL/////D2QFGGN0bDAwJHVjUG9wdXBBY2NvdW50TWVudQ8UKwACZAL/////D2QFDWN0bDAwJEZvb3RlcjEPFCsAAmQC/////w9kBUdjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJGNvbnRyb2xzVHJpZ2dlcg8UKwACZAL/////D2QFN2N0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQPFCsAAmQCnZCgBWQFO2N0bDAwJE1haW5Db250ZW50JHVjQW5hbHlzaXNDb250cm9scyR1Y1N0cmlrZU1vZGUkdWNUcmlnZ2VyDxQrAAJkAv////8PZAVOY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BpY2tlck1EJFBpY2tlclZpZXc0DxQrAAJkAv////8PZAUzY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsMCRjdGwwMCRsdkV4cGlyYXRpb25zDxQrAA5kZGRkZGRkPCsACAACCGRkZGYC/////w9kBS5jdGwwMCRNYWluQ29udGVudCR1Y0FuYWx5c2lzQ29udHJvbHMkdWNUcmlnZ2VyDxQrAAJkAv////8PZAUqY3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJGRwRFRFDxQrAAVkBrW+0rdd3dVIBrW+0rdd3dVIAgIFBDAuMDBkBTNjdGwwMCR1Y1NlbGVjdG9yJGx2R3JvdXBzJGN0cmwyJGN0bDAwJGx2RXhwaXJhdGlvbnMPFCsADmRkZGRkZGQ8KwAEAAIEZGRkZgL/////D2QFJWN0bDAwJHVjU2VsZWN0b3IkbHZHcm91cHMkY3RybDYkY3RsMDAPFCsAAmQC/////w9kBUhjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjUGlja2VyTUQkdmlldzYPFCsAAmQC/////w9kBTRjdGwwMCRNYWluQ29udGVudCR1Y0FuYWx5c2lzQ29udHJvbHMkdHh0Vm9sU2xpZGVTaXplDxQrAAIUKwACZGUoKwQBMGQFe2N0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNTdW1tYXJ5JHVjVHJlYXN1cnlTdW1tYXJ5VGFibGUkbHZUcmVhc3VyaWVzJGN0cmwxJHVjRnV0dXJlVHJpZ2dlcg8UKwACZAL/////D2QFUmN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNDb250cmFjdFBpY2tlciRsdkZ1dHVyZXMPFCsADmRkZGRkZGQUKwADZGRkAgNkZGRmAv////8PZAU1Y3RsMDAkTWFpbkNvbnRlbnQkdWNBbmFseXNpc0NvbnRyb2xzJHR4dFN0cmFkZGxlUHJpY2UPFCsAAhQrAAJkZSgrBAEwZAVDY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y1BvcHVwVGFicw8UKwACZAL/////D2QFSWN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNEYXRlUmFuZ2VQaWNrZXIPFCsAAmQC/////w9kBUJjdGwwMCRNYWluQ29udGVudCR1Y1ZpZXdDb250cm9sX0ludGVncmF0ZWRTdHJpa2VBc1lpZWxkJHVjUGlja2VyTUQPFCsAAmQC/////w9kBRBjdGwwMCRjbG9ja1Rva3lvDxQrAAJkApwEZAVSY3RsMDAkTWFpbkNvbnRlbnQkdWNWaWV3Q29udHJvbF9JbnRlZ3JhdGVkU3RyaWtlQXNZaWVsZCR1Y0NvbnRyYWN0UGlja2VyJHVjVHJpZ2dlcg8UKwACZAL/////D2QFKWN0bDAwJE1haW5Db250ZW50JHVjVmlld0hlYWRlciR1Y1F1aWtNZW51DxQrAAJkAv////8PZAUlY3RsMDAkdWNTZWxlY3RvciRsdkdyb3VwcyRjdHJsMyRjdGwwMA8UKwACZAL/////D2QFe2N0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNTdW1tYXJ5JHVjVHJlYXN1cnlTdW1tYXJ5VGFibGUkbHZUcmVhc3VyaWVzJGN0cmw1JHVjRnV0dXJlVHJpZ2dlcg8UKwACZAL/////D2QFEmN0bDAwJGNsb2NrTmV3WW9yaw8UKwACZAKQ/v//D2QFDGN0bDAwJHVjQ2FydA8UKwACZAL/////D2QFSGN0bDAwJE1haW5Db250ZW50JHVjVmlld0NvbnRyb2xfSW50ZWdyYXRlZFN0cmlrZUFzWWllbGQkdWNDb250cmFjdFBpY2tlcg8UKwACZAL/////D2Qu8O/Swe0ey2HlT4zjou857m3oLTVYVzOu/+5mtTPvUQ==">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['Form1'];
+if (!theForm) {
+    theForm = document.Form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="./WebResource(1).axd" type="text/javascript"></script>
+
+
+<script src="./ScriptResource.axd" type="text/javascript"></script>
+<script src="./ScriptResource(1).axd" type="text/javascript"></script>
+<script src="./ScriptResource(2).axd" type="text/javascript"></script>
+<script src="./ScriptResource(3).axd" type="text/javascript"></script>
+<script src="./ScriptResource(4).axd" type="text/javascript"></script>
+<script src="./ScriptResource(5).axd" type="text/javascript"></script>
+<script src="./ScriptResource(6).axd" type="text/javascript"></script>
+<script src="./ScriptResource(7).axd" type="text/javascript"></script>
+<script src="./ScriptResource(8).axd" type="text/javascript"></script>
+<script src="./ScriptResource(9).axd" type="text/javascript"></script>
+<script src="./ScriptResource(10).axd" type="text/javascript"></script>
+<script src="./ScriptResource(11).axd" type="text/javascript"></script>
+<script src="./ScriptResource(12).axd" type="text/javascript"></script>
+<script src="./ScriptResource(13).axd" type="text/javascript"></script>
+<script src="./ScriptResource(14).axd" type="text/javascript"></script>
+<script src="./ScriptResource(15).axd" type="text/javascript"></script>
+<script src="./ScriptResource(16).axd" type="text/javascript"></script>
+<script src="./ScriptResource(17).axd" type="text/javascript"></script>
+<script src="./ScriptResource(18).axd" type="text/javascript"></script>
+<script src="./ScriptResource(19).axd" type="text/javascript"></script>
+<script src="./ScriptResource(20).axd" type="text/javascript"></script>
+<script src="./ScriptResource(21).axd" type="text/javascript"></script>
+<script src="./ScriptResource(22).axd" type="text/javascript"></script>
+<script src="./ScriptResource(23).axd" type="text/javascript"></script>
+<script src="./ScriptResource(24).axd" type="text/javascript"></script>
+<script src="./ScriptResource(25).axd" type="text/javascript"></script>
+<script src="./ScriptResource(26).axd" type="text/javascript"></script>
+<script src="./ScriptResource(27).axd" type="text/javascript"></script>
+<script src="./ScriptResource(28).axd" type="text/javascript"></script>
+<script src="./ScriptResource(29).axd" type="text/javascript"></script>
+<script src="./ScriptResource(30).axd" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="7E260167">
+</div>
+    <input type="submit" name="ctl00$buttonDefaultSubmit" value="" onclick="return false;" id="buttonDefaultSubmit" style="position:absolute; left:-999em; width:1px">
+    <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$smPublic', 'Form1', ['tctl00$ucPopupAccountMenu$upAccountMenuPopup','ucPopupAccountMenu_upAccountMenuPopup','tctl00$upMainTitle','upMainTitle','tctl00$uplRibbons','uplRibbons','tctl00$upMain','upMain','tctl00$ucIFramePopup$upContextPopup','ucIFramePopup_upContextPopup'], ['ctl00$ucQuikMenu','ucQuikMenu'], ['ctl00$ucQuikTools$ucQS$lbPdfPortrait','ucQuikTools_ucQS_lbPdfPortrait','ctl00$ucQuikTools$ucQS$lbPdfLandscape','ucQuikTools_ucQS_lbPdfLandscape'], 90, 'ctl00');
+//]]>
+</script>
+
+    <input id="global_applicationPath" type="hidden" value="/">
+    <input id="global_instanceCache" type="hidden" value="insid=11012123">
+    <input id="global_settimezone_indicator" type="hidden" value="1">
+    <input id="global_utcTime" type="hidden" partyid="1856" value="06/29/2018 01:14:53">
+    <input id="global_title" type="hidden" value="QuikStrike" prefix="">
+    <input name="ctl00$global_attributes" type="hidden" id="global_attributes" mobileclass="no-mobile">
+    <input name="ctl00$global_mobile" type="hidden" id="global_mobile">
+
+    <div id="doc3" class="do-mobile no-mobile">
+	
+        <div id="nav-hd" class="hide">
+            <div id="nav-global" class="left">
+                
+
+<ul class="nav dyn-list">
+
+    
+                
+            <li class="selected first">
+                <a id="ucMainNavRibbon_lvSections_hlQuikStrike_0" title="Navigate to the main QuikStrike tools and views" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?mode=&amp;insid=11012123">QuikStrike<sup>®</sup></a>
+            </li>
+        
+            <li class="">
+                <a id="ucMainNavRibbon_lvSections_hlQuikStrike_1" title="Navigate to the QuikVol section to view historical data" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?mode=ivdb&amp;insid=11012123">QuikVol<sup>®</sup></a>
+            </li>
+        
+            <li class="">
+                <a id="ucMainNavRibbon_lvSections_hlQuikStrike_2" title="Navigate to the QuikReport section to view various market reports" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?mode=qrpt&amp;insid=11012123">QuikReports<sup>™</sup></a>
+            </li>
+        
+        
+
+    <li>
+        
+<span>QuikEdu<sup>®</sup></span>
+    </li>
+    
+    <li class="blog last">
+        <a id="ucMainNavRibbon_hlBlog" title="Go to the QuikStrike blog" href="http://www.bantix.com/options-software-blog/" target="_blank">QuikBlog</a>
+    </li>
+    
+    
+    
+    <li class="hide trial-settings">
+        <a id="ucMainNavRibbon_hlTrialPeriodSettings" title="Navigate to this section to change preferences relating to your trial subscription" href="https://cmegroup-tools.quikstrike.net/General/MyAccount/TrialSettings.aspx?insid=11012123">* Trial Settings *</a>
+    </li>
+</ul>
+
+            </div>
+            <div id="nav-options" class="right">
+                <div id="ucPopupAccountMenu_upAccountMenuPopup">
+		
+
+        <ul class="nav dyn-list">
+            <li class="first last">
+                
+
+                <a id="ucPopupAccountMenu_hlAccountTrigger" class="myaccount-popup-trigger" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#" popupclientid="ucPopupAccountMenu_pnlAccountMenuPopup">
+                    <span>
+                        <img id="ucPopupAccountMenu_imgMenu" src="./menu15.png" style="position:relative; top:3px">&nbsp;&nbsp;Welcome, INTEGRATED!
+                    </span>
+                </a>
+            </li>
+        </ul>
+
+        <div id="ucPopupAccountMenu_pnlAccountMenuPopup" class="qs-popup myaccount-popup clearfix" style="display:none">
+			
+    
+            <div class="info-section">
+                <div class="name">
+                    INTEGRATED INTEGRATED
+                </div>
+                <div class="info-item clearfix">
+                    <div class="left caption">
+                        Email
+                    </div>
+                    <div class="left data">
+                        cme-integrated@test.com
+                    </div>
+                </div>
+                <div class="info-item clearfix">
+                    <div class="left caption">
+                        Login
+                    </div>
+                    <div class="left data">
+                        integrated
+                    </div>
+                </div>
+                <div class="info-item clearfix">
+                    <div class="left caption">
+                        Access
+                    </div>
+                    <div class="left data">
+                        Professional
+                    </div>
+                </div>
+                <div class="info-item clearfix">
+                    <div class="left caption">
+                        QuikVol
+                    </div>
+                    <div class="left data">
+                        QVEssentials
+                    </div>
+                </div>
+                
+            </div>
+
+            <ul class="nav">
+                <li>
+                    <a id="ucPopupAccountMenu_hlMyAccount" caption="My Account" group="Popups" popupheight="660" popupcontext="MyAccount" popupmenuname="MyAccount" productid="1" href="https://cmegroup-tools.quikstrike.net/UserControls/Navigation/Account/#">
+                        My Account
+                    </a>
+                </li>
+                <li>
+                    <a id="ucPopupAccountMenu_hlSupport" caption="QuikStrike Support" group="Popups" popupheight="660" popupcontext="About" popupmenuname="About" productid="1" href="https://cmegroup-tools.quikstrike.net/UserControls/Navigation/Account/#">
+                        Support
+                    </a>
+                </li>
+                
+                
+                <li>
+                    <a id="ucPopupAccountMenu_lsLoginStatus" href="javascript:__doPostBack(&#39;ctl00$ucPopupAccountMenu$lsLoginStatus$ctl00&#39;,&#39;&#39;)">Sign Out</a>
+                </li>
+                
+            </ul>
+        
+		</div>
+
+    
+	</div>
+            </div>
+            <div id="nav-membership-type" class="right hide">
+                Your Membership Type: <a id="ucCompareEditions_hlSupport" title="Learn about other QuikStrike editions" persist="true" caption="QuikStrike Support" group="Popups" popupheight="660" popupcontext="About" popupmenuname="About" productid="1" viewid="AboutCompareEditions" href="https://cmegroup-tools.quikstrike.net/UserControls/Navigation/#">Professional</a>
+
+            </div>
+            <div id="nav-trial-notice" class="right hide">
+                <span class="days">-1 day(s) remaining</span>
+            </div>
+        </div>
+        <div id="container">
+            <div id="hd" class="hide">
+                <div id="banner" class="clearfix">
+                    <div class="yui-gb">
+                        <div class="yui-u first">
+                            <div id="brand-qs">
+                                <div class="logo">
+                                    <a id="hlQS" alt="QuikStrike Options Analysis Software" href="http://www.bantix.com/quikstrike-option-analysis-software/" target="_blank"><img src="./logo-quikstrike3.png" alt="" style="height:40px;width:127px;"></a>
+                                </div>
+                                <div class="datetime">
+                                    Thursday, June 28, 2018
+                                </div>
+                            </div>
+                        </div>
+                        <div class="yui-u">
+                            <div id="title">
+                                <h2 class="center">
+                                    <div id="upMainTitle">
+		
+                                            Treasury Strike as Yield
+                                        
+	</div>
+                                </h2>
+                                <div class="center clearfix">
+                                    <div id="title-clock">
+                                        <div id="clockChicago" class="worldclock first">
+		<span class="title">Chicago</span><span class="world-clock-tag time" format="HH:mm" ttformat="dddd, h:mm tt" timezoneoffset="-300" title="Friday, 4:17 AM">04:17</span>
+	</div>
+                                        <div id="clockNewYork" class="worldclock">
+		<span class="title">New York</span><span class="world-clock-tag time" format="HH:mm" ttformat="dddd, h:mm tt" timezoneoffset="-240" title="Friday, 5:17 AM">05:17</span>
+	</div>
+                                        <div id="clockLondon" class="worldclock">
+		<span class="title">London</span><span class="world-clock-tag time" format="HH:mm" ttformat="dddd, h:mm tt" timezoneoffset="60" title="Friday, 10:17 AM">10:17</span>
+	</div>
+                                        <div id="clockTokyo" class="worldclock last">
+		<span class="title">Tokyo</span><span class="world-clock-tag time" format="HH:mm" ttformat="dddd, h:mm tt" timezoneoffset="540" title="Friday, 6:17 PM">18:17</span>
+	</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="yui-u">
+                            <div id="brand-institution" class="clearfix">
+                                <div class="info">
+                                    <p>
+                                        
+                                    </p>
+                                </div>
+                                <div id="pnlHeaderImage" class="logo">
+		
+                                    <a href="http://www.cmegroup.com/" target="_blank">
+                                        <img id="imgHeader" src="./logo.png" alt="CME - Integrated Views">
+                                    </a>
+                                
+	</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="ribbon-panel" class=" ">
+                <div id="uplRibbons">
+		
+                        <div class="hide ribbon l2">
+                            <div id="nav-shortcuts" class="hide left">
+                                <div id="ctl00_ucShortcutMenu_ucError_pnlConfirmation" class="generic-popup qs-confirm " style="display:none;">
+			
+    <div id="ctl00_ucShortcutMenu_ucError_divMessage" style="margin:0; padding: 1.5em 2em 1em 2em;">
+        <div style="font-size:130%">
+            
+        </div>
+        <div class="center" style="font-size:110%;margin-top:1.5em">
+            <input type="submit" name="ctl00$ucShortcutMenu$ucError$btnOK" value="OK" onclick="return false;" id="ctl00_ucShortcutMenu_ucError_btnOK" class="ui-button ui-widget ui-state-default ui-corner-all">&nbsp;
+        </div>
+    </div>
+
+		</div>
+
+
+<ul class="nav">
+    <li>
+        <div class="clearfix trigger-container" style="height:100%">
+            <div class="left">
+                <a href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#" class="save-trigger" popupclientid="scm_AddNewShortcut"><img id="scm_StarImage" title="Save the current view to your Shortcut Menu" src="./star-bw.png"></a>
+            </div>
+            <div class="left">
+                <a href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#" class="popup-trigger" popupclientid="scm_ShortcutMenu"><img id="ctl00_ucShortcutMenu_imgMenu" title="My Shortcut Menu" src="./menu16.png"></a>
+            </div>
+        </div>
+    </li>
+</ul>
+
+<div id="scm_ShortcutMenu" class="qs-popup shortcutmenu-popup" popupoffset="left" style="display:none">
+			
+
+    <div class="scm-header clearfix">
+        <div class="scm-title left">
+            Shortcut Menu
+        </div>
+        <div class="right">
+            <a id="scm_edit_mode" title="Click here to manage your Shortcut Menu" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#" style="display: none;"><img src="./pencil.png"></a>
+        </div>
+    </div>
+
+    <div id="scm_editnotice" style="display:none;">
+        Click to edit an item, or drag/drop to move it
+    </div>    
+    <div id="scm_emptynotice" style="">
+        You have no saved menu shortcuts.  To add a shortcut, use the normal menu to navigate to any QuikStrike view and then click the
+        <img src="./star-bw(1).png" style="position:relative; top:3px"> icon.
+    </div>    
+
+    
+
+    
+    <div id="scm_itemcontrols" class="scm-controls" style="display:none;">
+        <a id="scm_delete_item" title="Delete this shortcut" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#"><img src="./delete2-sm.png" class="auto-hover-img"></a>
+    </div>
+    <div id="scm_groupcontrols" class="scm-controls" style="display:none;">
+        <a id="scm_add_group" title="Add a new section" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#"><img src="./add10.png" class="auto-hover-img"></a>
+        <a id="scm_delete_group" title="Delete this section and all of its shortcuts" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#"><img src="./delete2-sm.png" class="auto-hover-img"></a>
+    </div>
+    <input id="scm_textbox" type="text" style="display:none;">
+
+
+		</div>
+
+
+<div id="scm_AddNewShortcut" class="generic-popup clearfix" currentshortcutid="IntegratedStrikeAsYield1Summary" style="display:none; width:240px">
+			
+    <input type="hidden" name="ctl00$ucShortcutMenu$ucShortcutAddNew$scm_GroupDropDownValue" id="scm_GroupDropDownValue">
+    <input type="hidden" name="ctl00$ucShortcutMenu$ucShortcutAddNew$scm_ViewItemId" id="scm_ViewItemId">
+    <div class="body">
+        <div class="block">
+            <div class="block-header">Add New Shortcut</div>
+            <div class="block-body">
+                <div>
+                    <label for="scm_AddNewText" id="ctl00_ucShortcutMenu_ucShortcutAddNew_lblAddNewText">Shortcut Name:</label><br>
+                    &nbsp;
+                    <input name="ctl00$ucShortcutMenu$ucShortcutAddNew$scm_AddNewText" type="text" value="Treasury Strike as Yield (Eurodollars)" id="scm_AddNewText" style="width:200px; height:20px">
+                </div>
+                <div>
+                    <label for="scm_GroupDropDown" id="ctl00_ucShortcutMenu_ucShortcutAddNew_lblGroupDropDown">Add to Section:</label><br>
+                    &nbsp;
+                    <select name="ctl00$ucShortcutMenu$ucShortcutAddNew$scm_GroupDropDown" id="scm_GroupDropDown" style="height:20px">
+
+			</select>
+                </div>
+                <div id="scm_newGroupBlock" style="display:none">
+                    <label for="scm_NewGroupText" id="ctl00_ucShortcutMenu_ucShortcutAddNew_lblNewGroupText">New Section Name:</label><br>
+                    &nbsp;
+                    <input name="ctl00$ucShortcutMenu$ucShortcutAddNew$scm_NewGroupText" type="text" id="scm_NewGroupText" style="width:200px; height:20px">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="buttons">
+        <input type="submit" name="ctl00$ucShortcutMenu$ucShortcutAddNew$scm_NewShortcutSave" value="Save" id="scm_NewShortcutSave" class="ui-button ui-widget ui-state-default ui-corner-all">&nbsp;
+        <input type="submit" name="ctl00$ucShortcutMenu$ucShortcutAddNew$btnCancel" value="Cancel" id="ctl00_ucShortcutMenu_ucShortcutAddNew_btnCancel" class="ui-button ui-widget ui-state-default ui-corner-all" canceltarget="scm_AddNewShortcut">
+    </div>
+
+		</div>
+
+
+
+
+                            </div>
+                            <div id="nav-quikmenu" class="hide left">
+                                <div id="ucQuikMenu_ucError_pnlConfirmation" class="generic-popup qs-confirm " style="display:none;">
+			
+    <div id="ucQuikMenu_ucError_divMessage" style="margin:0; padding: 1.5em 2em 1em 2em;">
+        <div style="font-size:130%">
+            
+        </div>
+        <div class="center" style="font-size:110%;margin-top:1.5em">
+            <input type="submit" name="ctl00$ucQuikMenu$ucError$btnOK" value="OK" onclick="return false;" id="ucQuikMenu_ucError_btnOK" class="ui-button ui-widget ui-state-default ui-corner-all">&nbsp;
+        </div>
+    </div>
+
+		</div>
+
+
+<ul class="nav">
+    <li>
+        <a id="ucQuikMenu_btnQuikMenu" title="My QuikMenu items" class="menu-benchmark" popupclientid="pnlQuikMenuPopup" href="https://cmegroup-tools.quikstrike.net/UserControls/Navigation/QuikMenu/#">
+            <div class="clearfix">
+                <div class="left">
+                </div>
+                <div class="left" style="padding-top:3px;padding-bottom:5px">
+                    <img id="ucQuikMenu_imgHeart" src="./lightning-on-16.png">
+                </div>
+            </div>
+        </a>
+    </li>
+</ul>
+
+
+<div id="pnlQuikMenuPopup" class="qs-popup menubar-popup qs-input-popup clearfix" uniqueid="ctl00$ucQuikMenu" style="display:none">
+			
+    <div class="top-header">My QuikMenu</div>
+    <div class="empty notice" style="width:170px;margin:10px; display:block">
+        <p><strong>My QuikMenu</strong> allows you to keep all of your favorite QuikStrike views in one place for quick and easy access.</p>
+        <p>To add views to your QuikMenu, simply navigate to any view in QuikStrike and click the <img id="ucQuikMenu_imgQM" src="./lightning-off-16.png" align="absmiddle"> button.</p>
+    </div>
+    <div class="group" style="min-width:200px">
+        <ul class="nav">
+            
+        </ul>
+    </div>
+
+    <div id="divQuikMenuControls" style="display:none; position:fixed">
+        <!-- Not using an anchor tag here because the layers and layers of cascading css are causing problems -->
+        <span id="spanQuikMenuRemove" title="Remove this item from my QuikMenu"><img src="./delete2-sm.png" class="auto-hover-img"></span>
+    </div>
+
+
+		</div>
+
+                            </div>
+                            <div id="nav-view" class="left">
+                                
+        <ul class="nav dyn-list">
+            
+        <li id="ctl00_ucMenuBar_lvMenuBar_ctrl0_liMenu" class="first last">
+            <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_lbMenuItem" class="menubar-link selected" popupclientid="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_pnlCategoryPopup" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$lbMenuItem&#39;,&#39;&#39;)">Integrated<br>Views</a>
+            <div id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_pnlCategoryPopup" class="qs-popup menubar-popup clearfix" style="display:none">
+			
+    <div id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_pnlHeader" class="top-header">
+				
+        Integrated Views
+    
+			</div>
+    
+            
+            
+
+<div class="left group" style="width: 180px">
+    <div id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_pnlHeader" class="group-header">
+				
+        Open Interest
+    
+			</div>
+    
+    
+            <ul class="nav">
+                
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl0_lbMenuItem" heightgroup="0" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl0$lbMenuItem&#39;,&#39;&#39;)">Open Interest Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl1_lbMenuItem" heightgroup="1" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl1$lbMenuItem&#39;,&#39;&#39;)">Open Interest Most Actives Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl2_lbMenuItem" heightgroup="2" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl2$lbMenuItem&#39;,&#39;&#39;)">Open Interest Report
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl3_lbMenuItem" heightgroup="3" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl3$lbMenuItem&#39;,&#39;&#39;)">Open Interest Report for Weeklies
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl4_lbMenuItem" heightgroup="4" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl4$lbMenuItem&#39;,&#39;&#39;)">Strike Level Chart
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl5_lbMenuItem" heightgroup="5" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl5$lbMenuItem&#39;,&#39;&#39;)">COT Sheet
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl6_lbMenuItem" heightgroup="6" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl6$lbMenuItem&#39;,&#39;&#39;)">COT Benchmark
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl7_lbMenuItem" heightgroup="7" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl7$lbMenuItem&#39;,&#39;&#39;)">Vol Term Structure
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl8_lbMenuItem" heightgroup="8" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl8$lbMenuItem&#39;,&#39;&#39;)">Settlement Prices
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl9_lbMenuItem" heightgroup="9" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl9$lbMenuItem&#39;,&#39;&#39;)">TCA Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl10_lbMenuItem" heightgroup="10" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl10$lbMenuItem&#39;,&#39;&#39;)">ETCA Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl11_lbMenuItem" class=" selected" heightgroup="11" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl11$lbMenuItem&#39;,&#39;&#39;)">Treasury Strike as Yield
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl12_lbMenuItem" heightgroup="12" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl12$lbMenuItem&#39;,&#39;&#39;)">Vol2Vol™ Expected Range
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl13_lbMenuItem" heightgroup="13" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl13$lbMenuItem&#39;,&#39;&#39;)">Pace of the Roll Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl14_lbMenuItem" heightgroup="14" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl14$lbMenuItem&#39;,&#39;&#39;)">TWiO Report
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl15_lbMenuItem" heightgroup="15" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl15$lbMenuItem&#39;,&#39;&#39;)">Open Interest Heatmap
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl16_lbMenuItem" heightgroup="16" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl16$lbMenuItem&#39;,&#39;&#39;)">Future Change History
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl17_lbMenuItem" heightgroup="17" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl17$lbMenuItem&#39;,&#39;&#39;)">Cross Correlation
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl18_lbMenuItem" heightgroup="18" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl18$lbMenuItem&#39;,&#39;&#39;)">FedWatch Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl19_lbMenuItem" heightgroup="19" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl19$lbMenuItem&#39;,&#39;&#39;)">Equity POR Tool
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl20_lbMenuItem" heightgroup="20" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl20$lbMenuItem&#39;,&#39;&#39;)">Vol-Quoted Options
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl21_lbMenuItem" heightgroup="21" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl21$lbMenuItem&#39;,&#39;&#39;)">QuikVol
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl22_lbMenuItem" heightgroup="22" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl22$lbMenuItem&#39;,&#39;&#39;)">SpreadBuilder
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl23_lbMenuItem" heightgroup="23" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl23$lbMenuItem&#39;,&#39;&#39;)">QuikCoin
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl24_lbMenuItem" heightgroup="24" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl24$lbMenuItem&#39;,&#39;&#39;)">Expiration Calendar
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl25_lbMenuItem" heightgroup="25" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl25$lbMenuItem&#39;,&#39;&#39;)">Expiration Event Calendar
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl26_lbMenuItem" heightgroup="26" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl26$lbMenuItem&#39;,&#39;&#39;)">Option Calculator
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl27_lbMenuItem" heightgroup="27" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl27$lbMenuItem&#39;,&#39;&#39;)">CMETestView
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl28_lbMenuItem" heightgroup="28" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl28$lbMenuItem&#39;,&#39;&#39;)">EventVolCalculator
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl29_lbMenuItem" heightgroup="29" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl29$lbMenuItem&#39;,&#39;&#39;)">EDvFedFundSpread
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl30_lbMenuItem" heightgroup="30" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl30$lbMenuItem&#39;,&#39;&#39;)">STIR Analytics
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl31_lbMenuItem" heightgroup="31" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl31$lbMenuItem&#39;,&#39;&#39;)">OPECWatch
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl32_lbMenuItem" heightgroup="32" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl32$lbMenuItem&#39;,&#39;&#39;)">CME Benchmarks
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl33_lbMenuItem" heightgroup="33" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl33$lbMenuItem&#39;,&#39;&#39;)">Futures Info
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl34_lbMenuItem" heightgroup="34" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl34$lbMenuItem&#39;,&#39;&#39;)">Vol Curve
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl35_lbMenuItem" heightgroup="35" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl35$lbMenuItem&#39;,&#39;&#39;)">Pricing Sheet
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl36_lbMenuItem" heightgroup="36" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl36$lbMenuItem&#39;,&#39;&#39;)">AskQS
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl37_lbMenuItem" heightgroup="37" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl37$lbMenuItem&#39;,&#39;&#39;)">AUS Pricing
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl38_lbMenuItem" heightgroup="38" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl38$lbMenuItem&#39;,&#39;&#39;)">TeraBit Prices
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl39_lbMenuItem" heightgroup="39" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl39$lbMenuItem&#39;,&#39;&#39;)">TeraBit Split View
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl40_lbMenuItem" heightgroup="40" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl40$lbMenuItem&#39;,&#39;&#39;)">TeraBit USD Prices
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            <li>
+                <a id="ctl00_ucMenuBar_lvMenuBar_ctrl0_ctl00_lvMenuCategory_ctrl0_ctl00_lvMenuGroup_ctrl41_lbMenuItem" heightgroup="41" href="javascript:__doPostBack(&#39;ctl00$ucMenuBar$lvMenuBar$ctrl0$ctl00$lvMenuCategory$ctrl0$ctl00$lvMenuGroup$ctrl41$lbMenuItem&#39;,&#39;&#39;)">TeraBit EUR Prices
+                    <div class="item-description"></div>
+                </a>
+            </li>
+        
+            </ul>
+        
+</div>
+
+        
+        
+
+		</div>
+
+        </li>
+    
+        </ul>
+    
+
+
+                            </div>
+
+                            
+
+                            
+                            
+                            
+
+                        </div>
+                        <div id="divLevel3Ribbon" class="ribbon l3 clearfix">
+                            <div id="nav-tier3">
+                                
+                                <div id="nav-subnav">
+                                    
+    
+
+                                </div>
+                                
+                                
+                            </div>
+                            <div id="divLevel3Tools" class="right l3-tools">
+
+                                <div id="ucQuikTools_ucConfirmation_pnlConfirmation" class="generic-popup qs-confirm " style="display:none;">
+			
+    <div id="ucQuikTools_ucConfirmation_divMessage" style="margin:0; padding: 1.5em 2em 1em 2em;">
+        <div style="font-size:130%">
+            
+        </div>
+        <div class="center" style="font-size:110%;margin-top:1.5em">
+            <input type="submit" name="ctl00$ucQuikTools$ucConfirmation$btnOK" value="OK" onclick="return false;" id="ucQuikTools_ucConfirmation_btnOK" class="ui-button ui-widget ui-state-default ui-corner-all">&nbsp;
+        </div>
+    </div>
+
+		</div>
+
+
+<div class="navbar-selector right clearfix">
+    <!-- Changes to this markup may also require changes to QuikTools.js -->
+    <a id="btn_quiktool" title="Click to show PDF creation options" class="text" popupclientid="ucQuikTools_pnlQuikTools" href="javascript:__doPostBack(&#39;ctl00$ucQuikTools$btn_quiktool&#39;,&#39;&#39;)">
+        <div><img src="./document-pdf-portrait.png" align="texttop">PDF</div>
+    </a>
+    <a id="ucQuikTools_hlQuikTools" title="Click to show PDF creation options" class="arrow" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#" popupclientid="ucQuikTools_pnlQuikTools">
+        <div>
+            <img id="ucQuikTools_imgDropArrow" src="./arrow-d-wh.png">
+        </div>
+    </a>
+</div>
+
+
+
+
+<div id="ucQuikTools_pnlQuikTools" class="qs-popup generic-popup qs-input-popup" popupoffset="left" popupanchor="ucQuikTools_hlQuikTools" style="display:none">
+			
+    <div id="ucQuikTools_ucQS_ucConfirmation_pnlConfirmation" class="generic-popup qs-confirm " style="display:none;">
+				
+    <div id="ucQuikTools_ucQS_ucConfirmation_divMessage" style="margin:0; padding: 1.5em 2em 1em 2em;">
+        <div style="font-size:130%">
+            
+        </div>
+        <div class="center" style="font-size:110%;margin-top:1.5em">
+            <input type="submit" name="ctl00$ucQuikTools$ucQS$ucConfirmation$btnOK" value="OK" onclick="return false;" id="ucQuikTools_ucQS_ucConfirmation_btnOK" class="ui-button ui-widget ui-state-default ui-corner-all">&nbsp;
+        </div>
+    </div>
+
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+<div id="quiktools" class="group" toolid="">
+    <div class="clearfix">
+        <div class="column" heightgroup="0">
+            <div class="section">
+                <div class="header">Create PDF</div>
+                <div class="tool">
+                    <a id="ucQuikTools_ucQS_lbPdfPortrait" title="Generate a Portrait PDF of the current view" class="quiktool " toolname="Portrait" href="javascript:__doPostBack(&#39;ctl00$ucQuikTools$ucQS$lbPdfPortrait&#39;,&#39;&#39;)">
+                        <div class="clearfix">
+                            <img id="ucQuikTools_ucQS_imgPdfPortrait" src="./pdf-32.png">
+                            <div class="text">
+                                Portrait
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="tool">
+                    <a id="ucQuikTools_ucQS_lbPdfLandscape" title="Generate a Landscape PDF of the current view" class="quiktool " toolname="Landscape" href="javascript:__doPostBack(&#39;ctl00$ucQuikTools$ucQS$lbPdfLandscape&#39;,&#39;&#39;)">
+                        <div class="clearfix">
+                            <img id="ucQuikTools_ucQS_imgPdfLandscape" src="./pdf-land-32.png">
+                            <div class="text">
+                                Landscape
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+            </div>
+            
+        </div>
+
+        
+
+        
+    </div>
+</div>
+
+
+		</div>
+                                
+                                
+
+                                <div id="nav-contexthelp" class=" tool">
+                                    <a id="ucHelpTrigger_hlContextHelpTrigger" class="tips-trigger" href="https://cmegroup-tools.quikstrike.net/UserControls/ContextHelp/#" ison="0" title="Turn On Help Tips"><img src="./help16.png" alt=""></a>
+
+
+                                </div>
+
+                                
+
+<div class="tool" style="position:relative">
+    <input type="image" name="ctl00$ctl05$refreshButton" id="refreshButton" title="Refresh the current view" class="auto-hover-img" src="./refresh-bk-16.png">
+</div>
+<div id="throbber2" class="tool">
+    <div id="ctl05_upThrobber2" style="display:none;" role="status" aria-hidden="true">
+			
+            <img id="throbberImg" title="Loading..." src="./throbber.gif" alt="Loading..." style="position:absolute">
+        
+		</div>
+</div>
+
+
+                            </div>
+                        </div>
+                        <div class="center hide" style="font-size: 90%; font-weight:bold; padding: 5px 10px 0px 10px; color:#001ECE; margin:0px">
+                            Want to get even more out of QuikStrike?  <a id="ucLearnMore_hlSupport" title="Learn about other QuikStrike editions" persist="true" caption="QuikStrike Support" group="Popups" popupheight="660" popupcontext="About" popupmenuname="About" productid="1" viewid="AboutCompareEditions" href="https://cmegroup-tools.quikstrike.net/UserControls/Navigation/#">Learn More</a>
+
+                        </div>
+                    
+	</div>
+            </div>
+            <div id="bd">
+		
+                <div id="yui-main">
+                    <div class="yui-b">
+                        
+
+                        <div id="upMain">
+			
+                                <div id="content" class="clearfix do-mobile no-mobile">
+                                    <input type="hidden" name="ctl00$page_title" id="page_title" value="QuikStrike - Treasury Strike as Yield">
+                                    <div id="main-content" class="expanded">
+                                        <div class="notice hide" id="access-denied-msg">
+                                            <div class="clearfix">
+                                                <span style="float: left">You do not have access to this feature, please contact QuikStrike support to upgrade your service plan</span><a href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#" style="float: right;">x</a>
+                                            </div>
+                                        </div>
+                                        <div id="vsQuikStrike" class="error" style="display:none;">
+
+			</div>
+                                        
+
+    <input name="ctl00$MainContent$global_viewAttributes" type="hidden" id="global_viewAttributes" tmrrefreshid="MainContent_tmrAutoRefresh">
+
+    
+    
+
+    <div id="MainContent_pnlContainer">
+				<div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_divHeader" class="ui-widget-header ui-corner-top viewheader clearfix no-default-submit">
+    <div class="viewheader-info left">
+        <h3>Treasury Analytics Summary</h3>
+    </div>
+    <div>
+        
+
+<div class="right" style="">
+    <a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_controlsTrigger_ct_trigger" title="Settings" class="ui-icon ui-icon-circle-triangle-n" targetid="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_pnlToolbar" stateid="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_controlsTrigger_ct_state" href="https://cmegroup-tools.quikstrike.net/UserControls/Common/#"></a>
+</div>
+<input type="hidden" name="ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$controlsTrigger$ct_state" id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_controlsTrigger_ct_state" value="show">
+
+    </div>
+    <div class="right">
+        <a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucTweet_hlTweet" title="Tweet this view" class="card-tweeter icon-trigger auto-hover-img" containerid="" cardmode="1" cardtitle="Treasury Analytics Summary" carddesc="" via="@CMEGroup" href="https://cmegroup-tools.quikstrike.net/UserControls/Twitter/#"><img id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucTweet_imgTweet" src="./tweet16-2.png"></a>
+    </div>
+    <div class="right">
+         
+    </div>
+</div>
+
+<div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_pnlToolbar" class="toolbar center clearfix">
+					
+    <table style="width:100%; margin:0px">
+        <tbody><tr>
+            <td style="width:30%;text-align:left">
+</td>
+            <td style="width:40%;text-align:center">
+                <span id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_spanSettings">
+                    
+                    <span id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_spanSettingsTrigger">
+    <a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_ucTrigger_lnkTrigger" class="generic-popup-trigger toolbar-trigger" popupclientid="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_pnlContracts" href="https://cmegroup-tools.quikstrike.net/UserControls/Common/#"><label for="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_ucTrigger_imgTrigger" id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_ucTrigger_lblTrigger">Contracts</label><img id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_ucTrigger_imgTrigger" src="./droparrow16.png" align="absmiddle"><input type="hidden" name="ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucContractPicker$ucTrigger$hfPopupTrigger" id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_ucTrigger_hfPopupTrigger" value="closed"></a>
+
+</span>
+
+<div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_pnlContracts" class="qs-popup expirationbar-popup clearfix" style="display:none">
+						
+    <div class="group" style="width: 100px; font-size:110%;">
+        
+                <ul class="nav">
+                    
+                <li>
+                    <a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_lvFutures_ctrl0_lbContract" class="square-corners selected" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucContractPicker$lvFutures$ctrl0$lbContract&#39;,&#39;&#39;)">Sep 2018</a>
+                </li>
+            
+                <li>
+                    <a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_lvFutures_ctrl1_lbContract" class="square-corners " href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucContractPicker$lvFutures$ctrl1$lbContract&#39;,&#39;&#39;)">Dec 2018</a>
+                </li>
+            
+                <li>
+                    <a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucContractPicker_lvFutures_ctrl2_lbContract" class="square-corners " href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucContractPicker$lvFutures$ctrl2$lbContract&#39;,&#39;&#39;)">Mar 2019</a>
+                </li>
+            
+                </ul>
+            
+    </div>
+
+					</div>
+
+                    
+                    
+                    
+                </span>
+            </td>
+            <td style="width:30%;text-align:right;padding-right:5px">
+                Bond Prices: 6/28/2018 5:20 PM CT
+            </td>
+        </tr>
+    </tbody></table>
+   
+
+				</div>
+
+<div class="ui-widget-info clearfix">
+
+    <div class="qs-tabs qs-vtabs ui-tabs ui-widget ui-tabs-vertical ui-helper-clearfix"> 
+        <ul id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ulTabs" style="width:108px;" class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all ui-vtabs-nav">
+            
+
+<div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPicker_pnlPopup" class="qs-popup view-selector-popup clearfix" style="display:none; width:180px">
+					
+    <ul class="nav">
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPicker_btn1" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPicker$btn1&#39;,&#39;&#39;)">Prices and Charts</a></li>
+
+    </ul>
+
+				</div>
+
+            
+
+<div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_pnlPopup" class="qs-popup view-selector-popup clearfix" style="display:none; width:180px">
+					
+    <ul class="nav">
+        <li class="title first">Home</li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view1_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view1$btnView&#39;,&#39;&#39;)">QuikReports Home<img id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view1_imgIcon" class="right" src="./home16.png"></a></li>
+        <li class="title">Product Reports</li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view6_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view6$btnView&#39;,&#39;&#39;)">This Week in Options</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view5_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view5$btnView&#39;,&#39;&#39;)">COT Report</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_PickerView1_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$PickerView1$btnView&#39;,&#39;&#39;)">Pace of the Roll</a></li>
+
+        <li class="title">Market Tools</li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_PickerView2_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$PickerView2$btnView&#39;,&#39;&#39;)">FedWatch Tool</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_PickerView5_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$PickerView5$btnView&#39;,&#39;&#39;)">Treasury Analytics</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view7_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view7$btnView&#39;,&#39;&#39;)">Cross Correlation</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view9_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view9$btnView&#39;,&#39;&#39;)">Market Scans</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_PickerView3_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$PickerView3$btnView&#39;,&#39;&#39;)">Swap Calculator</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_PickerView4_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$PickerView4$btnView&#39;,&#39;&#39;)">STIR Analytics</a></li>
+        <li class="title">Summary Reports</li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view8_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view8$btnView&#39;,&#39;&#39;)">COT Benchmark Summary</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_PickerView6_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$PickerView6$btnView&#39;,&#39;&#39;)">Metals Ratios/Spreads</a></li>
+        <li><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucPickerMD_view10_btnView" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$ucPickerMD$view10$btnView&#39;,&#39;&#39;)">Market/Sector Overview</a></li>
+
+    </ul>
+
+				</div>
+
+            <li class="spacer first ui-corner-left ui-state-default vtab">Summary</li>
+            <li class="ui-state-active ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lbSummary" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lbSummary&#39;,&#39;&#39;)">CTD/OTR</a></li>
+            <li class="spacer ui-corner-left ui-state-default vtab">Deliverables</li>
+            
+                        
+                    <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lvTabs_ctrl0_lbFuture" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lvTabs$ctrl0$lbFuture&#39;,&#39;&#39;)">2 Yr</a></li>
+                
+                    <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lvTabs_ctrl1_lbFuture" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lvTabs$ctrl1$lbFuture&#39;,&#39;&#39;)">5 Yr</a></li>
+                
+                    <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lvTabs_ctrl2_lbFuture" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lvTabs$ctrl2$lbFuture&#39;,&#39;&#39;)">10 Yr</a></li>
+                
+                    <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lvTabs_ctrl3_lbFuture" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lvTabs$ctrl3$lbFuture&#39;,&#39;&#39;)">Ultra 10 Yr</a></li>
+                
+                    <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lvTabs_ctrl4_lbFuture" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lvTabs$ctrl4$lbFuture&#39;,&#39;&#39;)">30 Yr</a></li>
+                
+                    <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lvTabs_ctrl5_lbFuture" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lvTabs$ctrl5$lbFuture&#39;,&#39;&#39;)">Ultra 30 Yr</a></li>
+                
+                
+            <li class="spacer ui-corner-left ui-state-default vtab">Yield</li>
+            <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lbYieldCurve" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lbYieldCurve&#39;,&#39;&#39;)">Futures Yield Curve</a></li>
+            <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lbYieldHistory" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lbYieldHistory&#39;,&#39;&#39;)">Futures Yield History</a></li>
+            <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lbTreasuryRates" title="Treasury.gov Daily Treasury Rates" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lbTreasuryRates&#39;,&#39;&#39;)">Cash Yield Curve</a></li>
+
+            <li class="spacer ui-corner-left ui-state-default vtab">Inter Commodity</li>
+            <li class="ui-corner-left ui-state-default vtab"><a id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_lbICSSpreads" href="javascript:__doPostBack(&#39;ctl00$MainContent$ucViewControl_IntegratedStrikeAsYield$lbICSSpreads&#39;,&#39;&#39;)">IC Spreads (ICS)</a></li>
+
+       </ul>
+        
+
+
+
+        <div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_divTabContent" class="qs-tab-panel qs-vtab-panel ui-corner-right" style="margin-left:108px;min-height:520px">
+            
+
+<div style="padding:.5em">
+
+    <div class="section-header2">&nbsp;Sep 2018 Contract</div>
+    <div>
+        <div class="shadow">
+    
+            <table frozencolumns="3" class="grid do-mobile base-sheet w-lg grid-v2  no-mobile">
+					<tbody><tr>
+						<th colspan="3" class="borderR">Treasury</th>
+						<th colspan="6">Cheapest to Deliver*</th>
+						<th colspan="6">On the Run**</th>
+					</tr>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Symbol</th>
+						<th scope="col" class="borderR">Price</th>
+						<th scope="col">Coupon</th>
+						<th scope="col">Maturity<br>Date</th>
+						<th scope="col">Delivery<br>Date</th>
+						<th scope="col">Issue<br>Date</th>
+						<th scope="col">Futures<br>Yield</th>
+						<th scope="col">Futures<br>DV01</th>
+						<th scope="col">Coupon</th>
+						<th scope="col">Maturity<br>Date</th>
+						<th scope="col">Value<br>Date</th>
+						<th scope="col">Issue<br>Date</th>
+						<th scope="col">OTR<br>Yield</th>
+						<th scope="col">OTR<br>DV01</th>
+					</tr>
+
+						
+            <tr id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucSummary_ucTreasurySummaryTable_lvTreasuries_ctrl0_trRow" class="">
+							<td class="nowrap">2 Yr</td>
+							<td class="center">
+<span>TUU8</span></td>
+							<td class="number borderR">105.3050</td>
+							<td class="center ctd">1 5/8</td>
+							<td class="center ctd">6/30/2020</td>
+							<td class="center ctd">10/3/2018</td>
+							<td class="center ctd">6/30/2015</td>
+							<td class="number ctd">2.60%</td>
+							<td class="number ctd">$36.08</td>
+							<td class="center ontherun">1 3/8</td>
+							<td class="center ontherun">9/15/2020</td>
+							<td class="center ontherun">6/29/2018</td>
+							<td class="center ontherun">9/15/2017</td>
+							<td class="number ontherun">2.55%</td>
+							<td class="number ontherun">$42.09</td>
+						</tr>
+						
+        
+						
+            <tr id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucSummary_ucTreasurySummaryTable_lvTreasuries_ctrl1_trRow" class="odd">
+							<td class="nowrap">5 Yr</td>
+							<td class="center">
+<span>FVU8</span></td>
+							<td class="number borderR">113.2200</td>
+							<td class="center ctd">2</td>
+							<td class="center ctd">11/30/2022</td>
+							<td class="center ctd">10/3/2018</td>
+							<td class="center ctd">11/30/2017</td>
+							<td class="number ctd">2.73%</td>
+							<td class="number ctd">$44.97</td>
+							<td class="center ontherun">2 3/4</td>
+							<td class="center ontherun">5/31/2023</td>
+							<td class="center ontherun">6/29/2018</td>
+							<td class="center ontherun">5/31/2018</td>
+							<td class="number ontherun">2.71%</td>
+							<td class="number ontherun">$45.82</td>
+						</tr>
+						
+        
+						
+            <tr id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucSummary_ucTreasurySummaryTable_lvTreasuries_ctrl2_trRow" class="">
+							<td class="nowrap">10 Yr</td>
+							<td class="center">
+<span>TYU8</span></td>
+							<td class="number borderR">120.0950</td>
+							<td class="center ctd">2 7/8</td>
+							<td class="center ctd">5/31/2025</td>
+							<td class="center ctd">9/28/2018</td>
+							<td class="center ctd">5/31/2018</td>
+							<td class="number ctd">2.82%</td>
+							<td class="number ctd">$72.62</td>
+							<td class="center ontherun">2 7/8</td>
+							<td class="center ontherun">5/31/2025</td>
+							<td class="center ontherun">6/29/2018</td>
+							<td class="center ontherun">5/31/2018</td>
+							<td class="number ontherun">2.81%</td>
+							<td class="number ontherun">$62.67</td>
+						</tr>
+						
+        
+						
+            <tr id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucSummary_ucTreasurySummaryTable_lvTreasuries_ctrl3_trRow" class="odd">
+							<td class="nowrap">Ultra 10 Yr</td>
+							<td class="center">
+<span>TNU8</span></td>
+							<td class="number borderR">128.1150</td>
+							<td class="center ctd">2 3/4</td>
+							<td class="center ctd">2/15/2028</td>
+							<td class="center ctd">9/28/2018</td>
+							<td class="center ctd">2/15/2018</td>
+							<td class="number ctd">2.86%</td>
+							<td class="number ctd">$105.41</td>
+							<td class="center ontherun">2 7/8</td>
+							<td class="center ontherun">5/15/2028</td>
+							<td class="center ontherun">6/29/2018</td>
+							<td class="center ontherun">5/15/2018</td>
+							<td class="number ontherun">2.84%</td>
+							<td class="number ontherun">$85.73</td>
+						</tr>
+						
+        
+						
+            <tr id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucSummary_ucTreasurySummaryTable_lvTreasuries_ctrl4_trRow" class="">
+							<td class="nowrap">30 Yr</td>
+							<td class="center">
+<span>USU8</span></td>
+							<td class="number borderR">145.100</td>
+							<td class="center ctd">4 1/2</td>
+							<td class="center ctd">2/15/2036</td>
+							<td class="center ctd">9/28/2018</td>
+							<td class="center ctd">2/15/2006</td>
+							<td class="number ctd">2.88%</td>
+							<td class="number ctd">$183.44</td>
+							<td class="center ontherun">3 5/8</td>
+							<td class="center ontherun">8/15/2043</td>
+							<td class="center ontherun">6/29/2018</td>
+							<td class="center ontherun">8/15/2013</td>
+							<td class="number ontherun">2.97%</td>
+							<td class="number ontherun">$189.09</td>
+						</tr>
+						
+        
+						
+            <tr id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ucSummary_ucTreasurySummaryTable_lvTreasuries_ctrl5_trRow" class="odd">
+							<td class="nowrap">Ultra 30 Yr</td>
+							<td class="center">
+<span>ULU8</span></td>
+							<td class="number borderR">160.010</td>
+							<td class="center ctd">3 3/4</td>
+							<td class="center ctd">11/15/2043</td>
+							<td class="center ctd">9/28/2018</td>
+							<td class="center ctd">11/15/2013</td>
+							<td class="number ctd">2.97%</td>
+							<td class="number ctd">$269.96</td>
+							<td class="center ontherun">3 1/8</td>
+							<td class="center ontherun">5/15/2048</td>
+							<td class="center ontherun">6/29/2018</td>
+							<td class="center ontherun">5/15/2018</td>
+							<td class="number ontherun">2.98%</td>
+							<td class="number ontherun">$200.83</td>
+						</tr>
+						
+        </tbody></table>
+				
+        
+</div>
+
+    </div>
+
+    
+
+    <div style="margin-top:1.5em">
+        *Cheapest to deliver determined by finding the security with the max implied repo<br>
+        **On the Run determined by finding the security with the latest issue date<br>
+    </div>
+
+</div>
+
+
+            
+        </div>
+    </div>
+
+</div>
+
+
+			</div>
+
+    
+
+    <!-- special case for popups from gadget, use static clientidmode so that the triggers can set their detailPopupId property manually, 
+        otherwise it gets lost when the gadget refreshes itself -->
+
+    
+
+    <span id="MainContent_tmrAutoRefresh" style="visibility:hidden;display:none;"></span>
+
+
+                                    </div>
+                                </div>
+                                
+                                
+
+<div class="tips-arrow qs-popup" style="display:none"></div>
+<div id="charttip_MainPopup" class="charttips-bubble qs-input-popup" style="display:none">
+</div>
+
+                                
+
+<div id="popupTip_Container" class="popup-splash qs-input-popup" style="display:none">
+    
+    <div class="clearfix">
+        <div class="right">
+            <a id="popupTip_Close" title="Close" class="auto-hover-img" href="https://cmegroup-tools.quikstrike.net/UserControls/PopupTip/#"><img title="Close" src="./close_red16.png" alt=""></a>
+        </div>
+    </div>
+
+    <div id="popupTip_Content" style="margin-top:10px"></div>
+
+</div>
+                            
+		<div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" aria-describedby="ucQuikTools_ucQS_viewHistoryDialogPopup" aria-labelledby="ui-id-1" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-1" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div class="hide ui-dialog-content ui-widget-content" id="ucQuikTools_ucQS_viewHistoryDialogPopup" popupheight="600" popuptitle="Current View Event History" contentpageurl="/Admin/MaintenanceEvents/ViewHistoryLogListing.aspx" triggerclass="viewhistory-trigger" popupposition="Center" popupresizable="1" popupwidth="800" popupoffsettop="0" popupoffsetleft="0" popuptitleformatattributes="" contentattributes="vid,svid" gadgetmode="1" contentpagedivsourceid="event-viewhistory-content" style="display: block;">
+				<div id="ucQuikTools_ucQS_viewHistoryDialogPopup-content">
+					Loading...
+				</div>
+			</div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" aria-describedby="eventDetailPopupXX" aria-labelledby="ui-id-2" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-2" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div class="hide ui-dialog-content ui-widget-content" id="eventDetailPopupXX" popupheight="600" popuptitle="Detail for EventLogId {0}" contentpageurl="/Admin/MaintenanceEvents/EventDetail.aspx" triggerclass="event-detail-trigger" popupposition="Center" popupresizable="1" popupwidth="600" popupoffsettop="0" popupoffsetleft="0" popuptitleformatattributes="evtid" contentattributes="evtid,acctid" gadgetmode="1" contentpagedivsourceid="event-detail-content" style="display: block;">
+				<div id="eventDetailPopupXX-content">
+					Loading...
+				</div>
+			</div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" aria-describedby="global_FuturesSpreadChartPopup" aria-labelledby="ui-id-3" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-3" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div class="hide ui-dialog-content ui-widget-content" id="global_FuturesSpreadChartPopup" popupheight="500" popuptitle="Futures Spread Chart" contentpageurl="/User/FuturesSpread/FuturesSpreadDetail.aspx" triggerclass="global-future-spread-detail-trigger" popupposition="Center" popupresizable="1" popupwidth="1000" popupoffsettop="0" popupoffsetleft="0" popuptitleformatattributes="" contentattributes="puid,type,spreadwidth" triggercontainerid="future-spread-list" gadgetmode="1" contentpagedivsourceid="future-spread-detail" style="display: block;">
+				<div id="global_FuturesSpreadChartPopup-content">
+					Loading...
+				</div>
+			</div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div>
+    <div class="tips-num" style="display:none"></div>
+    <img class="tips-id" src="./help_id.png" style="display:none">
+    <div class="tips-arrow" style="display:none"></div>
+    <div id="ucQuikTools_ctl00_pnlTip" class="tips-bubble" tipid="1" tiptarget="btn_quiktool" position="BottomCenter" width="-1" xoffset="0" yoffset="0" style="display:none">
+			
+        Create PDF of report (best result: Landscape)
+    
+		</div>
+</div><div>
+    <div class="tips-num" style="display:none"></div>
+    <img class="tips-id" src="./help_id.png" style="display:none">
+    <div class="tips-arrow" style="display:none"></div>
+    <div id="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ctl00_pnlTip" class="tips-bubble" tipid="2" tiptarget="ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_ulTabs" position="RightCenter" width="180" xoffset="-20" yoffset="-40" style="display:none">
+					
+        Choose which treasury future to view
+    
+				</div>
+</div></div>
+                        
+                    </div>
+                </div>
+                
+
+<style type="text/css">
+    #newwatchdialog .content, 
+    #newwatchdialog-error .content
+    {
+    	text-align:left;
+    	padding-top:1em;
+    }
+        
+</style>
+
+
+
+
+
+                
+
+<style type="text/css">
+    #deletewatchdialog .content, 
+    #deletewatchdialog-error .content
+    {
+    	text-align:center;
+    	padding-top:1em;
+    }
+    
+    #deletewatchdialog-error .content
+    {
+    	text-align:left;
+    }
+    
+</style>
+
+
+
+
+
+            
+	</div>
+            <div id="ft">
+                <div id="Footer1_pnlIntegrated" style="vertical-align:middle">
+		
+    <div class="clearfix" style="line-height:10px">
+        <div class="left">
+            <span style="font-size:120%; position:relative;top:5px">
+                Powered by <a target="_new" href="http://www.bantix.com/quikstrike-option-analysis-software/">QuikStrike</a><sup>®</sup>
+            </span>
+            
+            
+        </div>
+        
+        <div class="right">
+            <span style="position:relative;top:2px">
+                <a id="Footer1_hlTwitter2" title="Follow QuikStrike on Twitter" href="http://twitter.com/#!/QuikStrike1" target="_new"><img title="Follow QuikStrike on Twitter" src="./icon-twitter24.png" alt=""></a>&nbsp;
+                <a id="Footer1_hlYouTube2" title="Watch QuikStrike videos on YouTube" href="http://www.youtube.com/user/QuikStrike1" target="_new"><img title="Watch QuikStrike videos on YouTube" src="./icon-youtube24.png" alt=""></a>&nbsp;
+                <a id="Footer1_hlLinkedIn2" title="QuikStrike is Linked In" href="https://www.linkedin.com/company/quikstrike?trk=biz-brand-tree-co-name" target="_new"><img title="QuikStrike is Linked In" src="./icon-linkedin24.png" alt=""></a>&nbsp;
+            </span>
+            
+            
+        </div>
+    </div>
+
+	</div>
+
+
+
+
+            </div>
+        </div>
+    
+</div>
+    <div id="ucIFramePopup_upContextPopup">
+	
+		<div id="globalContextPopup" style="display:none" class="ui-draggable ui-resizable">
+            <div class="popup-title clearfix ui-draggable-handle">
+                <div class="left title-text"></div>
+                <div class="right">
+                    <a class="popup-close" title="Close" href="https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=IntegratedStrikeAsYield&amp;insid=11012123#">
+                        X
+                    </a>
+                </div>
+            </div>
+            
+            <div class="content-container">
+			    <iframe id="mainFrame" frameborder="0" scrolling="no" allowfullscreen="" style="display:block" src="./saved_resource.html"></iframe>
+            </div>
+		<div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div>
+    
+</div>
+
+    <span id="spanPopupQuery" class="hide"></span>
+    
+<script type="text/javascript">
+//<![CDATA[
+var Page_ValidationSummaries =  new Array(document.getElementById("vsQuikStrike"));
+//]]>
+</script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+
+(function(id) {
+    var e = document.getElementById(id);
+    if (e) {
+        e.dispose = function() {
+            Array.remove(Page_ValidationSummaries, document.getElementById(id));
+        }
+        e = null;
+    }
+})('vsQuikStrike');
+Sys.Application.add_init(function() {
+    $create(QuikStrike.WebControls.DetailPopup, {"DetailPopupClientId":"ucQuikTools_ucQS_viewHistoryDialogPopup"}, null, null, $get("ucQuikTools_ucQS_viewHistoryDialogPopup"));
+});
+Sys.Application.add_init(function() {
+    $create(QuikStrike.WebControls.DetailPopup, {"DetailPopupClientId":"eventDetailPopupXX"}, null, null, $get("eventDetailPopupXX"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.UI._UpdateProgress, {"associatedUpdatePanelId":null,"displayAfter":1,"dynamicLayout":true}, null, null, $get("ctl05_upThrobber2"));
+});
+Sys.Application.add_init(function() {
+    $create(QuikStrike.Public.Web.UserControls.Common.ControlsTrigger, {"ClientId":"ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_controlsTrigger_ct_trigger"}, null, null, $get("ctl00_MainContent_ucViewControl_IntegratedStrikeAsYield_controlsTrigger_ct_trigger"));
+});
+Sys.Application.add_init(function() {
+    $create(QuikStrike.WebControls.DetailPopup, {"DetailPopupClientId":"global_FuturesSpreadChartPopup"}, null, null, $get("global_FuturesSpreadChartPopup"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.UI._Timer, {"enabled":false,"interval":60000,"uniqueID":"ctl00$MainContent$tmrAutoRefresh"}, null, null, $get("MainContent_tmrAutoRefresh"));
+});
+//]]>
+</script>
+</form>
+    <!--[if lte IE 7]>
+        <style type="text/css">
+            div.item-wrapper div.ui-widget-info
+            {
+                text-align: center;
+            }
+            div.item-wrapper div.ui-widget-info table
+            {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        </style>
+    <![endif]-->
+    <!--[if IE 6]>
+        <script type="text/javascript">
+            var IE6UPDATE_OPTIONS = {
+                icons_path: '/Images/ie6update/'
+            }
+	    </script>
+        <script src='/Scripts/ie6update.js' type="text/javascript"></script>
+    <![endif]-->
+
+
+<div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons ui-draggable ui-resizable" aria-describedby="newwatchdialog-error" style="display: none; position: absolute;" aria-labelledby="ui-id-4"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-4" class="ui-dialog-title">An Error has occurred adding your Watch</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div id="newwatchdialog-error" class="hide ui-dialog-content ui-widget-content" style="display: block;">
+    <div class="content"></div>
+</div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-corner-all ui-widget">Close</button></div></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons ui-draggable ui-resizable" aria-describedby="newwatchdialog" aria-labelledby="ui-id-5" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-5" class="ui-dialog-title">Add A New Watch</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div id="newwatchdialog" class="hide ui-dialog-content ui-widget-content" style="display: block;">
+    <div class="content">
+        Please give this watch a short name:<br>
+        <input id="newwatchdialog-name" class="w-lg" type="text"><br>
+        <div class="success center hide">Your watch has been added.</div>
+        <input id="newwatchdialog-strategyid" type="hidden">
+        <input id="newwatchdialog-triggerid" type="hidden">
+    </div>
+</div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-corner-all ui-widget">Ok</button><button type="button" class="ui-button ui-corner-all ui-widget">Cancel</button></div></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons ui-draggable ui-resizable" aria-describedby="deletewatchdialog-error" aria-labelledby="ui-id-6" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-6" class="ui-dialog-title">An Error has occurred deleting your Watch</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div id="deletewatchdialog-error" class="hide ui-dialog-content ui-widget-content" style="display: block;">
+    <div class="content"></div>
+</div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-corner-all ui-widget">Close</button></div></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons ui-draggable ui-resizable" aria-describedby="deletewatchdialog" aria-labelledby="ui-id-7" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-7" class="ui-dialog-title">Delete a Watch</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>Close</button></div><div id="deletewatchdialog" class="hide ui-dialog-content ui-widget-content" style="display: block;">
+    <div class="content">
+        Are you sure you want to delete this watch?<br>
+        <input id="deletewatchdialog-strategyid" type="hidden">
+        <input id="deletewatchdialog-triggerid" type="hidden">
+    </div>
+</div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" class="ui-button ui-corner-all ui-widget">Ok</button><button type="button" class="ui-button ui-corner-all ui-widget">Cancel</button></div></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div></body></html>

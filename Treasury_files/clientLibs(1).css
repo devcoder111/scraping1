@@ -1,0 +1,49 @@
+/* CME CONTENT TABLES in cme.text.less */
+.cmeContentTableFixedHeading tbody th {
+  background-color: #5db0f4;
+  color: #ffffff;
+}
+.cmeContentTableFixedHeading tbody .cmeRowHeading {
+  background-color: #f6f6f6;
+  color: #333333;
+  font-weight: normal;
+  vertical-align: top;
+}
+.cmeContentTableFixedHeading tbody .cmeColumnHeading {
+  background-color: #5db0f4;
+  color: #ffffff;
+  font-weight: bold;
+  vertical-align: middle;
+}
+.cmeContentTableFixedHeading .cmeRowBandingOn td {
+  background-color: #ffffff;
+}
+.cmeContentTableFixedHeading .cmeRowBandingOff td {
+  background-color: #f6f6f6;
+}
+/* CME DATA TABLES in cme.text.less */
+.cmeDataTableFixedHeading tbody th {
+  background-color: #252525;
+  color: #ffffff;
+  border: solid 1px #424242;
+}
+.cmeDataTableFixedHeading tbody .cmeRowHeading {
+  background-color: #f6f6f6;
+  color: #333333;
+  border: solid 1px #cacaca;
+  font-weight: normal;
+  vertical-align: top;
+}
+.cmeDataTableFixedHeading tbody .cmeColumnHeading {
+  background-color: #252525;
+  color: #ffffff;
+  border: solid 1px #424242;
+  font-weight: bold;
+  vertical-align: middle;
+}
+.cmeDataTableFixedHeading .cmeRowBandingOn td {
+  background-color: #ffffff;
+}
+.cmeDataTableFixedHeading .cmeRowBandingOff td {
+  background-color: #f6f6f6;
+}

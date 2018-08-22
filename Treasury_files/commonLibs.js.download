@@ -1,0 +1,3909 @@
+var cmePageFiltersAdd = function(filters, encodeSpacesAsPlusSigns) {
+	encodeSpacesAsPlusSigns = ((typeof encodeSpacesAsPlusSigns !== 'undefined') ? encodeSpacesAsPlusSigns : true);
+	$j.each(filters, function(name, value) {	// loop through filters
+		if (value !== undefined && name !== undefined) {	
+			
+			name = ((isURIEncoded(name, encodeSpacesAsPlusSigns) === false) ? extendedEncodeURIComponent(name, encodeSpacesAsPlusSigns) : name);
+			value = ((isURIEncoded(value, encodeSpacesAsPlusSigns) === false) ? extendedEncodeURIComponent(value, encodeSpacesAsPlusSigns) : value);
+			
+			if (isNaN(value)) {
+				value = value.toString();	// handle as string
+				if (value === "0" || value === "") { // remove value
+					delete cmePageFilters[name];
+				} else {
+					cmePageFilters[name] = value;
+				}
+			} else {
+				var ivalue = parseInt(value);	// handle as int
+				if (ivalue === 0) { // remove value
+					delete cmePageFilters[name];
+				} else {
+					cmePageFilters[name] = value;
+				}
+			}
+		}
+	});
+};
+
+var cmePageFiltersBuildUrl = function(myUrl) {
+	var cmePageFilters = cmePageFiltersGet();
+	if (cmePageFilters !== "") {
+	    return myUrl + (myUrl.indexOf("?") > -1 ? "&" : "?") + cmePageFilters;
+	} else {
+		return myUrl;
+	}
+};
+
+var cmePageFiltersUpdate = function(keepPageSize) {
+	"use strict";
+	
+	if (keepPageSize === undefined || !keepPageSize) {
+		cmePageFiltersAdd({"pageSize":0}); // remove pageSize from filters hash
+	}
+	
+	var queryHash = cmePageFiltersGet();
+	if (queryHash !== "") {
+		window.location.hash = queryHash;	// write filters to QS hash
+	}
+};
+
+var cmePageFiltersGet = function() {
+	var serialisedFilters = serializeObject(cmePageFilters, true);
+	return extendedDecodeURIComponent(serialisedFilters, true);	// build filters querystring from array
+};
+
+var cmePageFiltersBuildArrayFromString = function(filterValues) {
+	var setFilters = {};
+	var filters = {}, filter = '', name = '', value = '';
+	filters = filterValues.split('&');	// create array
+	for (var i = 0; i < filters.length; i++) {
+		var filter = filters[i].split('=');
+		if (filter.length === 2) {
+			name = filter[0];
+			value = filter[1];
+			if (name !== "" && value !== "") {
+				setFilters[name] = value; 
+			}
+		}
+	}
+	return setFilters;
+};
+
+
+
+
+// CME Pagination Plugin For jQuery
+// Author: Chris Kitson (CME Group)
+
+(function($) {
+
+	// data query variables
+	var cmePageContainer;
+	var cmePageTotal = 0;
+	var cmePageCurrent = 0;
+	var cmePageControlWrapper = '';
+	var cmePageControlClass = 'cmePaginationControl';
+	var cmePageCallbackFunction = '';
+	var cmePageMaxLinksDefault = 12;
+	var cmePageMaxLinks = cmePageMaxLinksDefault;
+	var cmePagePaginationWrapper = '';
+	var cmePageSize = undefined;
+
+	// plugin
+	$.fn.addCMEPagination = function(cmePageOptions) {
+		return this.each(function(){
+			cmePageContainer = $(this);
+			cmePageMaxLinks = getPaginationMaxLinks($j(window).width());
+			$.each(cmePageOptions, function(name, value) {
+				switch(name) {	// parameters from service call
+					case "pageTotal":
+						if(!isNaN(value)) { cmePageTotal = parseInt(value); }
+						break;
+					case "pageCurrent":
+						if(!isNaN(value)) { cmePageCurrent = parseInt(value); }
+						break;
+					case "controlWrapper":
+						cmePageControlWrapper = value;
+						break;
+					case "controlClass":
+						cmePageControlClass = value;
+						break;
+					case "callbackFunction":
+						cmePageCallbackFunction = value;
+						break;
+					case "paginationWrapper":
+						cmePagePaginationWrapper = value;
+						break;
+					case "pageSize":
+						cmePageSize = value;
+						break;
+				}
+			});
+
+			// add pagination html before and after wrapper (if not exists)
+			if ($j(this).parents(cmePageControlWrapper).prev().hasClass("cmePaginationWrapper") === false) {
+				var pageHtml = getPagination(cmePageControlClass, cmePageTotal, cmePageCurrent, cmePageMaxLinks);	// build html
+
+				var pageBeforeHtml = '<div class="cmePaginationWrapper cmePaginationWrapperTop">' + pageHtml + '</div>';
+				var pageAfterHtml = '<div class="cmePaginationWrapper cmePaginationWrapperBottom">' + pageHtml + '</div>';
+				var pageCtrlWrapper, pageCtrlEvents;
+				if (cmePagePaginationWrapper === '' || $j(cmePagePaginationWrapper).length === false) {	// put pagination before and after control (default)
+					pageCtrlWrapper = $j(this).closest(cmePageControlWrapper);
+					pageCtrlWrapper.before(pageBeforeHtml);
+					pageCtrlWrapper.after(pageAfterHtml);
+				} else {	// inject into wrapper
+					if ($j(cmePagePaginationWrapper).length) {
+						pageCtrlWrapper = $j(cmePagePaginationWrapper);
+						pageCtrlWrapper.html(pageHtml);
+					}
+				}
+				pageCtrlEvents = pageCtrlWrapper.parent();
+				// bind events
+				if($j(pageCtrlEvents).length) {
+					$j(pageCtrlEvents).off(cmeVal.Event());
+					$j(pageCtrlEvents).on(cmeVal.Event(), ".cmePaginationWrapper ul li a", function(e) {	// can this selector be made more generic i.e. for non-cmegroup.com pages?
+						e.preventDefault();
+						getPaginationClick($j(this), e, parseInt(cmePageTotal), cmePageCallbackFunction, cmePageMaxLinks, cmePageSize);
+					});
+					$j(window).on("resize", function() { // bind to window resize
+						cmePageMaxLinks = getPaginationMaxLinks($j(window).width());
+						var pageHtml = getPagination(cmePageControlClass, cmePageTotal, cmePageCurrent, cmePageMaxLinks);
+						drawPagination(pageHtml);
+
+					});
+				}
+			}
+		});
+	};
+
+
+	$.fn.bindCMEPagination = function(cmePageOptions) {
+		$j('html').addClass('cme-pagination');
+		return this.each(function(){
+			cmePageContainer = $(this);
+			cmePageMaxLinks = getPaginationMaxLinks($j(window).width());
+			$.each(cmePageOptions, function(name, value) {
+				switch(name) {	// parameters from service call
+					case "pageTotal":
+						if(!isNaN(value)) { cmePageTotal = parseInt(value); }
+						break;
+					case "pageCurrent":
+						if(!isNaN(value)) { cmePageCurrent = parseInt(value); }
+						break;
+					case "controlWrapper":
+						cmePageControlWrapper = value;
+						break;
+					case "controlClass":
+						cmePageControlClass = value;
+						break;
+					case "callbackFunction":
+						cmePageCallbackFunction = value;
+						break;
+					case "pageSize":
+						cmePageSize = vale;
+						break;
+				}
+			});
+
+			// bind events
+			if($j(".cmePaginationWrapper").length) {
+				$j(".cmePaginationWrapper").off(cmeVal.Event());
+				$j(".cmePaginationWrapper").on(cmeVal.Event(), "ul li a", function(e) {
+					e.preventDefault();
+					getPaginationClick($j(this), e, parseInt(cmePageTotal), cmePageCallbackFunction, cmePageMaxLinks, cmePageSize);
+				});
+				$j(window).on("resize", function() { // bind to window resize
+					cmePageMaxLinks = getPaginationMaxLinks($j(window).width());
+					var pageHtml = getPagination(cmePageControlClass, cmePageTotal, cmePageCurrent, cmePageMaxLinks);
+					drawPagination(pageHtml);
+
+				});
+			}
+		});
+	};
+
+	function drawPagination(pageHtml) {
+		$j(".cmePaginationWrapper").html(pageHtml);
+	}
+
+	function getPaginationMaxLinks(screenWidth) {
+		var linkSize = 40;
+		if (screenWidth <= 785) { 	// in responsive mode
+			paginationMaxLinks = Math.round((screenWidth / linkSize) - 7);	// calc number
+		} else {
+			paginationMaxLinks = cmePageMaxLinksDefault; // set as default
+		}
+		return paginationMaxLinks;
+	}
+
+	function getPaginationClick(ctrl, event, pTotal, callback, pMaxLinks, pageSize) {
+		event.preventDefault();
+		var link = $j(ctrl), pageCurrent = 0, pageGoTo = 0, pageFunction = '', pageHtml = '', isTop = false;
+		isTop = link.parents(".cmePaginationWrapper").hasClass("cmePaginationWrapperTop");
+		if (!link.parent().hasClass("disabled") && !link.parent().hasClass("active")) {	// link is not disabled or active, so let's go...
+			// determine currently selected page
+			if(link.parent().siblings(".active") !== undefined) {
+				pageCurrent = link.parent().siblings(".active").attr("data-page");
+				if(isNaN(pageCurrent) === false) {
+					pageCurrent = Number(pageCurrent);
+				}
+			} else {
+				pageCurrent;
+			}
+
+			// determine pagination function called
+			pageFunction = link.attr("rel").replace("pagination ","");
+
+			switch(pageFunction) {
+				case "page-first":
+					pageGoTo = 1;
+					break;
+				case "page-previous":
+					if((pageCurrent - 1) > 1) {	// check next page is not less than 1
+						pageGoTo = pageCurrent - 1;
+					} else {
+						pageGoTo = 1;
+					}
+					break;
+				case "page-next":
+					if((pageCurrent + 1) < pTotal) {	// check next page is not greater than total
+						pageGoTo = pageCurrent + 1;
+					} else {
+						pageGoTo = pTotal;
+					}
+					break;
+				case "page-last":
+					pageGoTo = pTotal;
+					break;
+				default:
+					pageFunction = pageFunction.replace("page-","");
+					if (isNaN(pageFunction) === false) {
+						pageGoTo = Number(pageFunction);
+					}
+			}
+
+			// check page is in range
+			if (pageGoTo < 1 || pageGoTo > pTotal) {
+				pageGoTo = 1;	// invalid page, go to first
+			}
+
+			// invoke callback function
+			if (callback !== "") {
+				if (pageSize === undefined) {
+					window[callback](pageGoTo);
+				} else {
+					window[callback](pageGoTo, pageSize);
+				}
+			}
+
+			cmePageCurrent = pageGoTo; // set new current
+
+			// redraw pagination
+			var pageHtml = getPagination("cmePaginationTable", pTotal, pageGoTo, pMaxLinks);
+
+			// update pagination html
+			drawPagination(pageHtml);
+
+			// scroll to top pagination control for second instance
+			if ($j(cmePageControlWrapper).length) {
+				if (!isTop) {
+					$j("html, body").scrollTop($j(cmePageControlWrapper).offset().top - 40);
+				}
+			}
+		}
+	}
+
+	function getPagination(className, pTotal, pNumber, pMaxLinks) {
+		var pHtml = '';
+		if (pTotal > 1) {
+			pHtml = '<div class="cmePagination ' + className + '"><ul data-pagetotal="' + pTotal + '">';
+			pHtml += '<li';
+			if(pNumber === 1) { pHtml += ' class="disabled"'; }
+			pHtml += '><a href="#" rel="pagination page-first">&laquo;</a></li>';
+			pHtml += '<li';
+			if(pNumber === 1) { pHtml += ' class="disabled"'; }
+			pHtml += '><a href="#" rel="pagination page-previous">&lsaquo; Prev</a></li>';
+			var pL = 0; var pR = 0; var pX = 0; var pOffset = 0;
+			if ((pTotal > pMaxLinks) && pMaxLinks > 0) {	// show limited number of links
+				pOffset = Number(Math.round(pMaxLinks / 2));	// calc offset
+				pL = Number(pNumber - pOffset);
+				if (pL < 0) { pL = 0; }	// calc left
+				pR =  Number(pMaxLinks - (pNumber - pL));
+				if ((pNumber + pR) > pTotal){
+					pR = Number(pTotal - pNumber);
+				} // calc right
+				pX = Number(pNumber - pL + pR);	// count links
+				if (pX < pMaxLinks){
+					pL -= (pMaxLinks - pX);
+				} // increase to max length if less
+				// build left links
+				for (var i=pL;i<pNumber;i++){
+					pHtml += getPaginationItem(i + 1, pNumber, pTotal);
+				}
+				// build right links
+				for (var i=pNumber;i<pNumber+pR;i++){
+					pHtml += getPaginationItem(i + 1, pNumber, pTotal);
+				}
+			} else if (pMaxLinks === 0 || pMaxLinks < 0) {
+				// display current only
+				pHtml += getPaginationItem(pNumber, pNumber, pTotal);
+			} else {	// show all links
+				for (var i=0;i<pTotal;i++){
+					pHtml += getPaginationItem(i + 1, pNumber, pTotal);
+				}
+			}
+			pHtml += '<li';
+			if(pNumber === pTotal) {
+				pHtml += ' class="disabled"';
+			}
+			pHtml += '><a href="#" rel="pagination page-next">Next &rsaquo;</a></li>';
+			pHtml += '<li';
+			if(pNumber === pTotal){
+				pHtml += ' class="disabled"';
+			}
+			pHtml += '><a href="#" rel="pagination page-last">&raquo;</a></li>';
+			pHtml += '</ul></div>';
+		}
+		return pHtml;
+	}
+
+	function getPaginationItem(currentPage, selectedPage, totalPages) {
+		var linkClass = '';var linkHTML = '';
+		if (selectedPage === currentPage) { linkClass = 'active'; } else { linkClass = 'pageLink away-' + Math.abs(selectedPage - currentPage); }
+		linkHTML += '<li class="' + linkClass + '" data-page="' + currentPage + '"><a href="#" rel="pagination page-' + currentPage + '">' + currentPage;
+		if (selectedPage === currentPage) { linkHTML += ' of ' + totalPages; }
+		linkHTML += '</a></li>';
+		return linkHTML;
+	}
+
+})(jQuery);
+
+
+(function($){
+	var scrollListenerIsSetUp = false;
+    $.fn.extend({
+        cmeTables: function(options) {
+            var defaults = {
+            	addDefaultResponsiveHandling: false,
+                addStriping: false,
+                addRowHighlight : false,
+                addFixedHeader : false,
+                addSorting: false
+            };
+
+            var cmeTableOptions =  $.extend(defaults, options);
+            return this.each(function() {
+                var myTable = $j(this);
+                if (cmeTableOptions.addDefaultResponsiveHandling === true) {
+	                myTable.addDefaultResponsiveHandling();
+                 }
+
+                if (cmeTableOptions.addStriping === true) {
+	                myTable.addRowStriping();
+                 }
+
+                 if (cmeTableOptions.addRowHighlight === true) {
+	                 myTable.addRowHighlight();
+                 }
+
+				if (cmeTableOptions.addFixedHeader === true) {
+					myTable.addFixedHeader(true);
+				}
+
+				if (cmeTableOptions.addSorting === true) {
+					myTable.addSorting();
+				}
+            });
+        },
+        addDefaultResponsiveHandling: function() {
+		    return this.each(function(){
+		    	$j(this).wrap('<div class="cmeTableWrapper cmeContentTableWrapper" />'); // Add wrapper to all ordinary tables to facilitate responsive handling
+		    });
+		},
+		addRowStriping: function() {
+		    return this.each(function(){
+	        	if ($j(this).prop("tagName") === "TABLE") {	// table striping
+					if (!$j(this).hasClass('cmeSpecTable')) {
+						$j('tbody tr:even', $j(this)).addClass('cmeRowBandingOff');
+						$j('tbody tr:odd', $j(this)).addClass('cmeRowBandingOn');
+		        	} else {
+			        	$j(this).children('tbody').children('tr:even').addClass('cmeRowBandingOff');
+						$j(this).children('tbody').children('tr:odd').addClass('cmeRowBandingOn');
+		        	}
+	        	} else if ($j(this).prop("tagName") === "UL" || $j(this).prop("tagName") === "OL") {	// lists striping
+					$j(this).children('li:even').addClass('cmeRowBandingOff');
+					$j(this).children('li:odd').addClass('cmeRowBandingOn');
+	        	}
+		    });
+		},
+		addRowHighlight: function() {
+			if ((!$j('html').hasClass('msie-8')) && (!$j('html').hasClass('msie-7')) && (!$j('html').hasClass('cmeResponsive'))) {
+				return this.each(function(){
+					$j(this).find("tbody tr").hover(function(){
+						if (!$j(this).hasClass('cmeNoTableRowHighlight')){
+		                $j(this).addClass("cmeTableRowHighlight");}
+		             },function(){
+			             $j(this).removeClass("cmeTableRowHighlight");
+			         });
+				});
+			} else {
+				return this;
+			}
+		},
+		scrollListener: function() {
+			$j("table.cmeTable:not(.cmeTableFixedHeaderFirst)").each(function() {	// loop through all tables without cmeTableFixedHeaderFirst class
+				if ($j(this).children('thead.cmeFloatingHeader').length > 0){
+					var el = $j(this), offset = el.offset(), scrollTop = $j(window).scrollTop() + getTopOffset(), floatingHeader = $j("thead.cmeFloatingHeader", this);
+					var cssProperties = {
+							top: getTopOffset() + 'px'
+						};
+
+					if ((scrollTop > offset.top) && (scrollTop < offset.top + el.height())) {
+						floatingHeader.css(_.extend(cssProperties, {
+							visibility: "visible",
+							display: "inline"
+						}));
+					} else {
+						floatingHeader.css(_.extend(cssProperties, {
+							visibility: "hidden",
+							display: "none"
+						}));
+					}
+				}
+			});
+			if ($j("table.cmeTableFixedHeaderFirst").length) { // attach scroll listener for cmeTableFixedHeaderFirst table
+				var firstTable = $j("table.cmeTableFixedHeaderFirst:first");
+				var lastTable = $j("table.cmeTableFixedHeaderFirst:last");
+				if ($j(firstTable).children("thead.cmeFloatingHeader").length > 0) {
+					var el = $j(firstTable), offset = el.offset(), scrollTop = $j(window).scrollTop() + getTopOffset(), floatingHeader = $j("thead.cmeFloatingHeader", firstTable), elLast = $j(lastTable), offsetLast = elLast.offset();
+					var cssProperties = {
+							top: getTopOffset() + 'px'
+						};
+
+					if ((scrollTop > offset.top) && (scrollTop < offsetLast.top + elLast.height())) {
+						floatingHeader.css(_.extend(cssProperties, {
+							visibility: "visible",
+							display: "inline"
+						}));
+					} else {
+						floatingHeader.css(_.extend(cssProperties, {
+							visibility: "hidden",
+							display: "none"
+						}));
+					}
+				}
+			}
+		},
+		addFixedHeader: function(blnSetFixedHeader) {
+			if ((!$j('html').hasClass('msie-7')) && (!$j('html').hasClass('cmeResponsive'))) {
+				if(cmeVal.UseFixedTableHeaders() === true){
+					var self = this;
+					if (!scrollListenerIsSetUp) {
+						$j(window).scroll(function() {
+							self.scrollListener.call(this);
+							scrollListenerIsSetUp = true;
+						}).trigger("scroll");
+					}
+				}
+				return this.each(function(){
+					// check index of table with class "cmeTableFixedHeaderFirst" if it is -1 the table doesn't have the class, if it is 0 it is the first instance
+					// we can check this value to determine wether or not to clone fixed header for this instance of a table
+					var tableIndex = $j("table.cmeTableFixedHeaderFirst").index($j(this));
+					if (! $j(this).hasClass("cmeTableFixedHeaderFirst") || tableIndex < 1) {
+						var clonedHeaderRow, newClonedHeaderRow, myCellWidth = 0, myBorderWidth = 0;
+						clonedHeaderRow = $j("thead", this);
+						var $jbefore = clonedHeaderRow.clone();
+						$jbefore.css("width", clonedHeaderRow.width()).addClass("cmeFloatingHeader");
+						$j('th', clonedHeaderRow).each(function(i) {
+							var myHeaderCell = $j(this);
+							if (myHeaderCell.css("borderCollapse") === "collapse") {
+								myBorderWidth = parseInt(myHeaderCell.css("borderLeftWidth"),10);
+							} else {
+								myBorderWidth = parseInt(myHeaderCell.css("borderLeftWidth"),10) + parseInt(myHeaderCell.css("borderRightWidth"),10);
+							}
+							myCellWidth = (($j('html').hasClass('chrome')) || ($j('html').hasClass('safari')) || ($j('html').hasClass('opera')) || ($j('html').hasClass('msie')) ? myHeaderCell.width()+myBorderWidth : myHeaderCell.width());
+							$jbefore.find('th').eq(i).css({ 'width':myCellWidth, 'min-width':myCellWidth });
+						});
+						clonedHeaderRow.parent().prepend($jbefore);
+						$j(this).addClass('cmeFloatingHead');
+					}
+				});
+			} else if (blnSetFixedHeader === false) {
+				$j('.cmeFloatingHeader').remove();
+			} else {
+				return this;
+			}
+		},
+		addSorting: function() {
+			 return this.each(function(){	// check filter variables are available
+			 	if (cmePageFilters["sortField"] === undefined && cmePageFilters["sortAsc"] === undefined) {
+			 		var myActiveSortCell = $j("thead th div.cmeSortActive a", this);
+			 		var mySortColumn = myActiveSortCell.attr('id');
+			 		var mySortDirection;
+			 		if (myActiveSortCell.parent().hasClass('cmeSortasc')){
+				 		mySortDirection = "true";
+			 		} else {
+				 		mySortDirection = "false";
+			 		}
+			 		cmePageFiltersAdd({	// add updated filter values for ajax request
+				 		"pageNumber": 1,
+				 		"sortField": mySortColumn,
+				 		"sortAsc": mySortDirection
+				 	});
+			 	}
+	        	if (cmePageFilters["sortField"] !== undefined && cmePageFilters["sortAsc"] !== undefined) {
+		        	var sortField = cmePageFilters["sortField"];
+		        	var sortDirection = (cmePageFilters["sortAsc"] === "true") ? "asc" : "desc";
+			        $j("thead th a", this).parent().removeClass("cmeSortActive");	// remove defaults
+			        //$j("thead th", this).removeClass("cmeSortasc");
+			        //$j("thead th", this).removeClass("cmeSortdesc");
+			        $j("thead th a#" + sortField, this).parent().removeClass("cmeSortdesc").removeClass("cmeSortasc").addClass("cmeSort" + sortDirection).addClass("cmeSortActive");	// set classes
+			        //$j("thead th#" + sortField, this).addClass("cmeSort" + sortDirection);
+	        	}
+		    });
+		}
+    });
+})(jQuery);
+
+function cmeTablesPaginationEventClick(pageNumber, pageSize) {
+	if (window.cmeComponents) {
+		$j.each(window.cmeComponents, function(index, value) {	// loop through components
+			if (value.type === "list" || value.pagination === true) { // check it is a list component
+				cmePageFiltersAdd({	// add updated filter values for ajax request
+					"pageNumber": pageNumber
+				});
+				var component = cmeComponents[index]; // get component
+				var handler = component.handlerObj;
+				handler.refreshDataTable(pageSize);
+			}
+		});
+	}
+}
+
+function cmeReplacePaginationParam(str, paramName, paramValue) {
+	if (str.indexOf(paramName) > -1) {	 // regex to replace param
+		switch (paramName) {
+			case "pageNumber":
+				str = str.replace(/(pageNumber=)[^\&]+/, '$1' + paramValue);
+				break;
+			case "pageSize":
+				str = str.replace(/(pageSize=)[^\&]+/, '$1' + paramValue);
+				break;
+			case "searchString":
+				str = str.replace(/(searchString=)[^\&]+/, '$1' + paramValue);
+				break;
+		}
+	} else {
+		if (str.indexOf('?') > -1) {
+			str += '&' + paramName + '=' + paramValue;
+		} else {
+			str += '?' + paramName + '=' + paramValue;
+		}
+	}
+	return str;
+}
+function openPopupWindow(windowURL,windowTitle,showToolbar,showLocation,showDirectories,showStatus,showMenubar,showScrollbars,isResizeable,hasHistory,popupWidth,popupHeight) {
+	var popupLeftPos = (screen.width/2)-(popupWidth/2);
+	var popupTopPos = (screen.height/2)-(popupHeight/2);
+	windowTitle = (($j('html').hasClass('cme-lte-ie8')) ? '_blank' : makeDOMFriendly(windowTitle));
+	var targetWin = window.open (windowURL, windowTitle, 'toolbar='+showToolbar+',location='+showLocation+',directories='+showDirectories+',status='+showStatus+',menubar='+showMenubar+',scrollbars='+showScrollbars+',resizable='+isResizeable+',copyhistory='+hasHistory+',width='+popupWidth+',height='+popupHeight+',top='+popupTopPos+',left='+popupLeftPos);
+}
+
+function openModalWindow(windowURL, windowTitle, isIframe, popupSize){
+	var dialogWidth = $j('#cmePageContentArea').width()/2;
+	dialogWidth = Math.ceil((dialogWidth*10)/10);
+	dialogHeight = 'calc(100vh / 2)';
+	if (isIframe && popupSize) {
+		if (popupSize.width) {
+			dialogWidth = popupSize.width;
+		}
+		if (popupSize.height) {
+			dialogHeight = popupSize.height;
+		}
+	}
+	windowTitle = (windowTitle !== "") ? windowTitle : null;
+	var $dialog;
+
+	if (isIframe) {
+		$dialog = $j('<div class="cmeiFrameModal">' +
+				'<iframe src="' + windowURL + '" width="100%" height="100%"></iframe>' +
+			'</div>');
+		$j('#cmePageContentArea', $dialog).attr('id', 'cmePageModalArea').addClass('cmeModalLayout');
+	} else {
+		$dialog = $j('<div></div>').load(windowURL + ' #cmePageContentArea', function(response, status, XMLHttpRequest){
+			if(status ==="success"){
+				$j('#cmePageContentArea', this).attr('id', 'cmePageModalArea').addClass('cmeModalLayout');
+				var $scripts = $j(response).find('#cmePageContentArea script');
+				//load scripts files
+				var pArray = $j.map($scripts.filter("[src]"), function (value) {
+					var p = $j.Deferred();
+					$.getScript(value.src, function() {
+						p.resolve();
+					});
+					return p;
+				});
+				//eval scripts
+				$j.when.apply($j, pArray).done(function (data) {
+					$j.each($scripts, function(idx, val) {
+						eval(val.text);
+					});
+				});
+			} else {
+				$j(this).html('<p>An error has occurred.</p>');
+			}
+		});
+	}
+
+	$dialog.dialog({
+		dialogClass: 'cmeModalWindow',
+		show: {
+			effect: "fade",
+			duration: 400
+		},
+		hide: {
+			effect: "fade",
+			duration: 400
+		},
+		title: windowTitle,
+		draggable: false,
+		modal: true,
+		resizable: false,
+		closeOnEscape: true,
+		closeText: "close",
+		position: { my: "center", at: "center", of: window },
+		open: function() {
+			$j('body').addClass('cmeModalDisplay');
+			$j('.ui-dialog-titlebar-close').addClass('cmeButton cmeButtonSecondary');
+			$j('.ui-dialog-content').css({'height': '100%', 'max-height': 'calc(100% - 30px)'});
+			$j('.ui-widget-overlay').addClass('cmeModalPageOverlay');
+		},
+		close: function() {
+			$j('body').removeClass('cmeModalDisplay');
+			$j(this).remove();
+			$j('.ui-widget-overlay').removeClass('cmeModalPageOverlay');
+		}
+	});
+	$dialog.dialog().parent().css({
+		'position':'fixed',
+		'top': (isIframe ? '10%' : '25%'),
+		'left': '50%',
+		'transform': 'translate(-50%)',
+		'height': dialogHeight,
+		'max-height': '80%',
+		'width': dialogWidth,
+		'max-width': '80%'
+	});
+	$dialog.dialog('open');
+}
+
+function getQueryStrings(url) {
+	var assoc  = {};
+	if (url) {
+		var decode = function (s) { return decodeURIComponent(s.replace(/\+/g, " ")); };
+		var queryString = url.substring(url.indexOf("?")+1);
+		var keyValues = queryString.split('&');
+		for(var i = 0; i <  keyValues.length; i++) {
+		var key = keyValues[i].split('=');
+		if (key.length > 1) {
+				assoc[decode(key[0])] = decode(key[1]);
+			}
+		}
+	}
+	return assoc;
+}
+
+function serializeObject(obj, encodeKeyValues) {
+	var str = [];
+	encodeKeyValues = ((typeof encodeKeyValues !== 'undefined') ? encodeKeyValues : false);
+	for(var p in obj)
+		if (obj.hasOwnProperty(p)) {
+			if (encodeKeyValues === true){
+				str.push(extendedEncodeURIComponent(p, true) + "=" + extendedEncodeURIComponent(obj[p], true));
+			} else {
+				str.push(p + "=" + obj[p]);
+			}
+		}
+	return str.join("&");
+}
+
+function encodeForHTML(str) {
+	var map = {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#039;'};
+	return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+function isURIEncoded(str, maintainPlusForSpaces){
+	maintainPlusForSpaces = ((typeof maintainPlusForSpaces !== 'undefined') ? maintainPlusForSpaces : false);
+	return extendedDecodeURIComponent(str, maintainPlusForSpaces) !== str;
+}
+
+function extendedDecodeURIComponent(str, maintainPlusForSpaces){
+	maintainPlusForSpaces = ((typeof maintainPlusForSpaces !== 'undefined') ? maintainPlusForSpaces : false);
+	str = decodeURIComponent(str);
+	if (maintainPlusForSpaces === false){
+		str = str.replace(/[+]/g,' ');
+	}
+	return str;
+}
+function extendedEncodeURIComponent (str, maintainPlusForSpaces) {
+		maintainPlusForSpaces = ((typeof maintainPlusForSpaces !== 'undefined') ? maintainPlusForSpaces : false);
+		if (maintainPlusForSpaces === true){
+			str = (typeof str === 'string') ? str.replace(/( )|(%2B)/g, '+') : str;
+		}
+		return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+				return '%' + c.charCodeAt(0).toString(16);
+		});
+}
+
+function sanitiseQueryString(strToClean) {
+	var strCleaned = "";
+	var strPrefix = "";
+	if (strToClean.charAt(0) === "?" || strToClean.charAt(0) === "#") {	//  remove ? or # from string if first
+		strPrefix = strToClean.charAt(0);
+		strToClean = strToClean.substring(1);
+	}
+	var vars = strToClean.split("&");	// split vars into name value pair
+	for (var i = 0; i < vars.length; i++) {	// loop through vars
+		var pair = vars[i].split("=");
+		if (pair.length > 1) {
+			strCleaned += (strCleaned === "") ? "" : "&";	// add ampersand if required
+			strCleaned += extendedEncodeURIComponent(pair[0]) + "=" + extendedEncodeURIComponent(pair[1]);
+		} else {
+			strCleaned += (strCleaned === "") ? "" : "&";	// add ampersand if required
+			strCleaned += extendedEncodeURIComponent(pair[0]);
+		}
+	}
+	return strPrefix + strCleaned;
+}
+
+function sanitiseURL(strToClean){
+	var myURL, myURLSearch;
+	if (strToClean.indexOf("?") !== -1){
+		myURL = strToClean.slice(0,strToClean.indexOf("?"));
+		myURL = encodeURI(myURL);
+		myURLSearch = strToClean.slice(strToClean.indexOf("?"), strToClean.length);
+		myURLSearch = sanitiseQueryString(myURLSearch);
+		myURL = myURL + myURLSearch;
+	} else if (strToClean.indexOf("#") !== -1){
+		myURL = strToClean.slice(0,strToClean.indexOf("#"));
+		myURL = encodeURI(myURL);
+		myURLSearch = strToClean.slice(strToClean.indexOf("#"), strToClean.length);
+		myURLSearch = sanitiseQueryString(myURLSearch);
+		myURL = myURL + myURLSearch;
+	} else {
+		myURL = encodeURI(strToClean);
+	}
+	return myURL;
+}
+
+function appendToQuerystring(searchKey, newParameters) {
+	var mySubstringLocation = window.location.search.indexOf(searchKey);
+	var myQuerystring = sanitiseQueryString(window.location.search);
+	if(myQuerystring.indexOf('?') !== -1) {
+		if(mySubstringLocation !== -1) {
+			myQuerystring = myQuerystring.substr(0, mySubstringLocation);
+		}
+		myQuerystring += '&' + newParameters;
+	} else {
+		myQuerystring = newParameters;
+	}
+	window.location.search = myQuerystring;
+}
+
+function nullTimer(myTimer) {
+		clearTimeout(myTimer);
+		myTimer = null;
+}
+
+function isResponsiveMode(){	
+	if ($j('#cmePageWrapper').css('position') === 'static') {
+		return true;
+	} else {
+		return false;
+	}	
+}
+
+function isPineapple() {
+	return $j('html').hasClass('cmePineapple');
+}
+
+function hasSimpleHeader() {
+		return $j('html').hasClass('hasSimpleHeader');
+}
+
+function addProgressAlert(elementId){
+	elementId.append('<div class="cmeProgressPanel">Processing...</div>').show("fast");
+}
+
+function removeProgressAlert(elementId){
+	$j('.cmeProgressPanel', elementId).delay(400).fadeOut('slow',function() {
+		$j(this).remove();
+	});
+}
+
+//Define Google Feed Replacement
+var GFR = function(feedURL) {
+
+	return 	{
+
+		/*serviceCallURL: "http://localhost:4502/CmeWS/mvc/CMEFeed/GetFeed",*/
+		serviceCallURL: "/CmeWS/mvc/CMEFeed/GetFeed",
+		numEntries: 4,
+		result: {},
+		feedURL: feedURL,
+
+		setNumEntries: function(numEntries){
+			this.numEntries = numEntries
+		},
+
+		load: function(callback){
+			//Maintain Reference to GFR object
+			var self = this;
+
+			//Encode feedURL
+			var feedURL = extendedEncodeURIComponent(self.feedURL,false);
+
+			/*TODO: Add Protocol Parameter*/
+			$j.ajax({
+				type: "GET",
+				url: self.serviceCallURL + "?url=" + feedURL,
+				dataType: "json",
+				cache: false
+			}).done(function(feedResult){
+
+				//Parse JSON into feed Object
+				if (feedResult.messages) {
+					self.result.feed = {};
+					self.result.feed.entries = [];
+					var i;
+					for (i=0;i < self.numEntries;i++){
+						self.result.feed.entries.push(feedResult.messages[i]);
+					}
+				}else{
+					self.result.error = "No Messages in Feed";
+				}
+
+			}).fail(function(xhr,textStatus,errorThrown) {
+				console.debug("GFR.load Failed: " + textStatus);
+				self.result.error = textStatus;
+			}).complete(function(){
+				callback(self.result);
+			});
+		}
+
+	}
+}
+
+function embedNavRSSFeed(feedURL,feedLayout,feedRecordCount,feedShowDate,feedShowDescription,feedRegion) {
+
+	var feedHTML = "";
+	var $jobjSpinner = $j('<div class="cmeNavProgressPanel"><span class="progressMessage">Processing..</span></div>');
+	feedRegion.empty().append($jobjSpinner);
+	$jobjSpinner.hide().fadeIn(100, function () {
+		var objFeed = new GFR(feedURL);
+		objFeed.setNumEntries(feedRecordCount);
+		objFeed.load(function (objResult) {
+			if (!objResult.error) {
+				if (objResult.feed.entries.length > 0) {
+					feedHTML = '<div class="cmeStaticMediaBox section">\n';
+					feedHTML += '<ul class="cmeList">\n';
+					$j.each(objResult.feed.entries, function (intIndex, objEntry) {
+						feedHTML += '<li class="cmeListContent cmeContentGroup">\n';
+						feedHTML += '<ul class="cmeMediaBox">\n';
+						feedHTML += '<li class="cmeMediaBoxContent ' + feedLayout + '">\n';
+						feedHTML += '<ul>\n';
+						feedHTML += '<li class="cmeMediaBoxTitle"><a href="' + objEntry.link.replace("?source=rss", "") + '">' + objEntry.title + '</a></li>\n';
+						if (feedLayout === "cmeMediaBoxContentAdvisoryLayout") {
+							feedHTML += '<li class="cmeMediaBoxMeta">\n';
+							feedHTML += '<ul class="cmeFlatList">\n';
+							if ((feedShowDate === "true") && (objEntry.publishedDate)) {
+								feedHTML += '<li class="cmeMediaBoxDate">' + moment(objEntry.publishedDate).format('MMM DD YYYY') + '</li>\n';
+							}
+							feedHTML += '</ul>\n';
+							feedHTML += '</li>\n';
+						} else {
+							if ((feedShowDate === "true") && (objEntry.publishedDate)) {
+								feedHTML += '<li class="cmeMediaBoxDate">' + moment(objEntry.publishedDate).format('MMM DD YYYY') + '</li>\n';
+							}
+						}
+						if ((feedShowDescription === "true") && (objEntry.contentSnippet)) {
+							feedHTML += '<li class="cmeMediaBoxDescription">' + objEntry.contentSnippet + '</li>\n';
+						}
+						feedHTML += '</ul>\n';
+						feedHTML += '</li>\n';
+						feedHTML += '</ul>\n';
+						feedHTML += '</li>\n';
+					});
+					feedHTML += '</ul>\n';
+					feedHTML += '</div>\n';
+				} else {
+					feedHTML = '<p><span class="cmeContentErrorMessage">Sorry, there is no content available at this time</span></p>\n';
+				}
+			} else {
+				feedHTML = '<p><span class="cmeContentErrorMessage">Sorry, there is no content available at this time</span></p>\n';
+			}
+
+			$jobjSpinner.fadeOut('slow', function () {
+				feedRegion.empty().append(feedHTML);
+				//$j(this).remove();
+			});
+		});
+	});/*.delay(500).hide('slow', function () {
+		$j(this).remove();
+	});*/
+}
+
+function getNavRSSFeed(feedURL,entryType,numOfEntries,targetID,targetClass,showSnippet,dateRequired,htmlWrapper,hasSubHtmlWrapper,imgURL,linkTarget) {
+
+	var strRSSContentBuilder = '';
+	var strRSSContentOpeningBuilder = '';
+	var htmlSubWrapper;
+	var myTargetContainer = $j('#' + targetID);
+	strRSSContentOpeningBuilder = '<' + htmlWrapper + ' class="' + targetClass + '">';
+	var $jProgressSpinner = $j('<div class="cmeNavProgressPanel"><span class="progressMessage">Processing..</span></div>');
+	if (htmlWrapper === 'ul') {
+		htmlSubWrapper = 'li';
+	} else if (htmlWrapper === 'li') {
+		htmlSubWrapper = 'ul';
+	}
+	myTargetContainer.empty().append($jProgressSpinner);
+	$jProgressSpinner.hide().fadeIn(100, function () {
+		var objFeed = new GFR(feedURL);
+		objFeed.setNumEntries(numOfEntries);
+		objFeed.load(function (objResult) {
+			if (!objResult.error) {
+				$j.each(objResult.feed.entries, function (intIndex, objEntry) {
+					strRSSContentBuilder += strRSSContentOpeningBuilder;
+					if (hasSubHtmlWrapper === true) strRSSContentBuilder += '<' + htmlSubWrapper + '>';
+					if (entryType === 'videos') {
+						strRSSContentBuilder += strRSSContentOpeningBuilder;
+						if (imgURL !== "") {
+							strRSSContentBuilder += '<a href="' + objEntry.link.replace("?source=rss", "") + '" target="' + linkTarget + '"><img src="' + imgURL + '" alt="' + objEntry.title + '" /></a>';
+						}
+						strRSSContentBuilder += '<p class="titleOrangeBold14">' + objEntry.title + '</p>';
+						strRSSContentBuilder += '<p>' + objEntry.contentSnippet + '</p>';
+						strRSSContentBuilder += '<a href="' + objEntry.link.replace("?source=rss", "") + '"';
+					} else if (entryType === 'jobs') {
+						strRSSContentBuilder += '<a href="' + objEntry.link + '"';
+
+					} else {
+						strRSSContentBuilder += '<li class="megaMenuStoryItemLink storyMetaData">';
+						strRSSContentBuilder += '<a href="' + objEntry.link + '"';
+					}
+					if (linkTarget !== "") {
+						strRSSContentBuilder += ' rel="' + linkTarget + '"';
+					}
+					strRSSContentBuilder += '>' + objEntry.title + '</a>';
+					strRSSContentBuilder += '</li>';
+
+
+					if ((objEntry.publishedDate) && (dateRequired !== false)) {
+						strRSSContentBuilder += '<li class="megaMenuStoryItemDate storyMetaData">';
+						var strPubDate = '';
+						strPubDate = moment(objEntry.publishedDate).format('MMM DD YYYY');
+						strRSSContentBuilder += strPubDate;
+						strRSSContentBuilder += '</' + htmlWrapper + '>';
+					}
+					if ((objEntry.contentSnippet) && (showSnippet === true)) {
+						strRSSContentBuilder += ' <li class="megaMenuStoryItemContent">' + objEntry.contentSnippet + '</li>';
+					}
+					if (hasSubHtmlWrapper === true) strRSSContentBuilder += '</' + htmlSubWrapper + '>';
+					strRSSContentBuilder += '</' + htmlWrapper + '>';
+				});
+				myTargetContainer.prepend(strRSSContentBuilder);
+			} else {
+				myTargetContainer.prepend('<li class="megaMenuItemNotice"><span>An error has occurred</span></li>');
+			}
+		});
+	}).delay(500).hide('slow', function () {
+		$j(this).remove();
+	});
+}
+
+function getNavXMLFeed(feedURL,numOfEntries,dateRequired,descriptionLength,targetID,targetClass,targetContentClass,linkTarget) {
+	var strRSSContentBuilder = '';
+	var strNoticeDate	= '';
+	var strNotice	= '';
+	var strCategory	= '';
+	var strDescription = '';
+	var myDataHolder = '';
+	var myTargetContainer = $j('#' + targetID);
+	var $jProgressSpinner = $j('<div class="cmeNavProgressPanel"><span class="progressMessage">Processing..</span></div>');
+	myTargetContainer.empty().append($jProgressSpinner);
+
+	$jProgressSpinner.hide().fadeIn(100, function(){
+		$j.ajax({
+			url: feedURL,
+			dataType: (!$j('html').hasClass('cme-xml-transform')) ? "text" : "xml",
+			success: function(objXml) {
+				var newXML = parseAsXml(objXml);
+				if($j(newXML).find('Advisory').length > 0){
+					strRSSContentBuilder = '<div class="cmeStaticMediaBox section">';
+					strRSSContentBuilder += '<ul class="cmeAdvisoriesList cmeList">';
+					$j(newXML).find('Advisory').slice(0,numOfEntries).each(function() {
+						var objEntry = new Object();
+						var $jitem = $j(this);
+						objEntry.title = $jitem.find('title').text();
+						objEntry.notice = $jitem.find('notice').text();
+						objEntry.category = $jitem.find('category').text();
+						if (($jitem.find('noticeDate').length > 0)  && (dateRequired !== false)) {
+							objEntry.noticeDate = $jitem.find('noticeDate').text();
+						}
+						objEntry.link = $jitem.find('link').text();
+						objEntry.content = $jitem.find('description').text();
+						objEntry.contentSnippet = processRSSContentText(objEntry.content, descriptionLength);
+
+						strRSSContentBuilder += '<li class="cmeListContent">';
+						strRSSContentBuilder += '<ul class="cmeMediaBox">';
+						strRSSContentBuilder += '<li class="cmeMediaBoxMeta cmeContentSection cmeContentGroup">';
+						strRSSContentBuilder += '<span class="cmeMediaBoxNotice cmeContentColumn span_1_of_3">' + objEntry.notice + '</span>';
+						strRSSContentBuilder += '<span class="cmeMediaBoxCategory cmeContentColumn span_1_of_3">' + objEntry.category + '</span>';
+						if((objEntry.noticeDate) && (dateRequired !== false)) {
+							strRSSContentBuilder += '<span class="cmeMediaBoxDate cmeContentColumn span_1_of_3">' + moment(objEntry.noticeDate).format('MMM, DD YYYY') + '</span>';
+						}
+						strRSSContentBuilder += '</li>';
+
+						strRSSContentBuilder += '<li class="cmeMediaBoxContent cmeContentSection cmeContentGroup">';
+						strRSSContentBuilder += '<span class="cmeMediaBoxTitle span_2_of_2"><a href="' + objEntry.link + '"';
+						if(linkTarget !== ""){
+							strRSSContentBuilder += ' rel="' + linkTarget + '"';
+						}
+						strRSSContentBuilder += '>' + objEntry.title + '</a></span>';
+						strRSSContentBuilder += '<span class="cmeMediaBoxBody span_2_of_2">' + objEntry.contentSnippet + '</span>';
+						strRSSContentBuilder += '</li></ul></li>';
+					});
+					strRSSContentBuilder += '</ul></div>';
+					myDataHolder += strRSSContentBuilder;
+					myTargetContainer.prepend(myDataHolder);
+				} else {
+					myTargetContainer.prepend('<li class="megaMenuItemNotice"><span>No data has been found</span></li>');
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				myTargetContainer.prepend('<li class="megaMenuItemNotice"><span>An error has occurred</span></li>');
+			}
+		});
+	}).hide('slow').fadeOut(100, function(){
+		$j(this).remove();
+	});
+}
+
+function changeInteractiveTablePageLength(thisTable){
+	var myPageLength = (($j("html").hasClass("cmeResponsive")) ? cmeVal.InteractiveTablePageLengthMobile() : cmeVal.InteractiveTablePageLength());
+	var myTable = thisTable.DataTable();
+	myTable.page.len(myPageLength).draw();
+}
+
+function getCookie(c_name) {
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0;i<ARRcookies.length;i++) {
+		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+		x=x.replace(/^\s+|\s+$n/g,"");
+		if (x===c_name) {
+			return unescape(y);
+		}
+	}
+}
+
+function deleteCookie(c_name) {
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() - 1);
+	document.cookie = c_name + "=; expires="+exdate.toUTCString();
+}
+
+function setCookie(c_name,value,path,exdays) {
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + exdays);
+	var c_value=escape(value) + ((exdays===null) ? "" : "; expires="+exdate.toUTCString());
+	if (path !== ""){
+		c_value = c_value + "; path=" + path;
+	}
+	document.cookie=c_name + "=" + c_value;
+}
+
+$j.fn.hasAttr = function(name) {
+	 return this.attr(name) !== undefined;
+};
+
+function processRSSContentText(contentString, stringLength) {
+	var myStringLength;
+	var re = new RegExp('<(.|\\n)*?>', 'igm');
+	var myContent = contentString.replace(re, ' ');
+	myContent = myContent.replace(/^\s+|\s+$/g,'');
+	if (myContent.length >= stringLength) {
+		myStringLength = myContent.indexOf(' ' , stringLength);
+		myContent = myContent.substr(0, myContent.lastIndexOf(myContent.substr(0,stringLength).match(/\s[^\s]*$/g))) + '...';
+	} else {
+		myContent += "...";
+	}
+	return myContent;
+}
+
+function parseAsXml(xml) {
+	if (!$j('html').hasClass('cme-xml-transform')) {
+		var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.loadXML(xml);
+		xml = xmlDoc;
+	}
+	return xml;
+}
+
+function isScriptLoaded(url) {
+		scripts = document.getElementsByTagName('script');
+		for (var i = scripts.length; i--;) {
+				if (scripts[i].src === url) return true;
+		}
+		return false;
+}
+
+function isNumber(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function makeDOMFriendly(str){
+	try {
+		str = extendedDecodeURIComponent(str);
+		str = str.replace(/^[^a-z]+|[^\w-]+/gi, "");
+		return str.toLowerCase();
+	} catch(e){
+		return str;
+	}
+}
+
+function changeURLParameter(url, param, paramVal) {
+		var TheAnchor = null;
+		var newAdditionalURL = "";
+		var baseURL = "", additionalURL = "", hashURL = "", isQuerystring = false, isHash = false, tempArray, temp = "";
+		if (url.indexOf("?") !== -1){
+			isQuerystring = true;
+			tempArray = url.split("?");
+			baseURL = tempArray[0];
+		additionalURL = tempArray[1];
+		} else {
+			if (url.indexOf("#") !==-1){
+				isHash = true;
+				tempArray = url.split("#");
+				baseURL = tempArray[0];
+			additionalURL = tempArray[1];
+			} else {
+				baseURL = url;
+			}
+		}
+
+		if ((additionalURL) && (isQuerystring === true)) {
+				var tmpAnchor = additionalURL.split("#");
+				var TheParams = tmpAnchor[0];
+				TheAnchor = tmpAnchor[1];
+				tempArray = TheParams.split("&");
+				temp = "";
+
+				for (i=0; i<tempArray.length; i++) {
+						if(tempArray[i].split('=')[0] !== param) {
+								newAdditionalURL += temp + tempArray[i];
+								temp = "&";
+						} else {
+							tempArray[i] = param+"="+paramVal;
+								newAdditionalURL += temp + tempArray[i];
+								temp = "&";
+					}
+				}
+
+				if(TheAnchor){
+					tempArray = TheAnchor.split("&");
+				temp = "";
+
+					for (i=0; i<tempArray.length; i++) {
+							if(tempArray[i].split('=')[0] !== param) {
+									hashURL += temp + tempArray[i];
+									temp = "&";
+							} else {
+								tempArray[i] = param+"="+paramVal;
+									hashURL += temp + tempArray[i];
+									temp = "&";
+							}
+					}
+				}
+
+		} else if ((additionalURL) && (isHash === true)) {
+				tempArray = additionalURL.split("&");
+				for (i=0; i<tempArray.length; i++) {
+						if(tempArray[i].split('=')[0] != param) {
+								newAdditionalURL += temp + tempArray[i];
+								temp = "&";
+						} else {
+								tempArray[i] = param+"="+paramVal;
+									newAdditionalURL += temp + tempArray[i];
+									temp = "&";
+							}
+				}
+		 }
+
+		if(TheAnchor) hashURL = "#" + hashURL;
+
+		if (isHash) {
+		 return baseURL + "#" + newAdditionalURL + hashURL;
+		} else if(isQuerystring) {
+			return baseURL + "?" + newAdditionalURL + hashURL;
+		} else {
+			return baseURL;
+		}
+}
+
+
+function CmeRequestManager(cfg) {
+	var that = this;
+	this.currentPath = cfg.currentPath;
+
+	this.links = cfg.links;
+	this.params = cfg.params;
+
+	this.buildQuery = function(link) {
+		var queryStr = link.path ? link.path : that.currentPath ;
+		var first = queryStr.indexOf("?") === -1;
+		if(link.overwrites) {
+			for(var k in link.overwrites) {
+				for(var i = 0; i < link.overwrites[k].length; i++) {
+					if (!first) {
+						queryStr += "&";
+					}  else {
+						queryStr += "?";
+					}
+					first = false;
+					queryStr += escape(k) + "="+ escape(link.overwrites[k][i]);
+				}
+			}
+		}
+
+		for(var k in that.params) {
+			if (!link.overwrites || !link.overwrites[k]) {
+				for(var i = 0; i < that.params[k].length; i++) {
+					if (that.params[k][i]) {
+						if (!first) {
+							queryStr += "&";
+						}  else {
+							queryStr += "?";
+						}
+						first = false;
+						queryStr += escape(k) + "="+ escape(that.params[k][i]);
+					}
+				}
+			}
+		}
+		return queryStr;
+	};
+
+	this.setParam = function(name, value) {
+		if (value) {
+			that.params[name] = [ value ];
+		}
+	};
+
+	this.refreshLinks = function() {
+		for(var i = 0; i < that.links.length; i++) {
+			var link = that.links[i];
+			link.el.href = that.buildQuery(link);
+		}
+
+		// find forms update input
+		for(var k in that.params) {
+			$j('input[name=' + k+ ']').val(that.params[k][0]);
+		}
+	};
+
+	this.addLink = function(link) {
+		that.links[that.links.length] = link;
+	};
+}
+
+$j(document).ready(function(){
+	$j('#cmePageMastheadArea').on('click', '.cmeMobileButton', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	}).on('tap', '.cmeMobileButton', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		var myPageNavElement = $j('#cmePageNavigation');
+		if (myPageNavElement.hasClass('mobileMenuActive')){
+			myPageNavElement.hide("slide", { direction: "left" }, 1000, function(){
+				myPageNavElement.removeClass('mobileMenuActive').removeClass('mobileMenuDisplayed');
+			});
+		} else {
+			myPageNavElement.addClass('mobileMenuActive').show("slide", { direction: "left" }, 1000, function(){
+				myPageNavElement.addClass('mobileMenuDisplayed').css({ 'height' : $j(document).height() + "px" });
+			});
+		}
+		$j('body').toggleClass('bodyActive');
+	});
+
+	  $j('body').on(cmeVal.Event(), '.mobileMenuActive > #cmePageNavigationBar > .cmeNavigationItem > span', function() {
+		if ($j(this).parent().hasClass('mobileSubMenuActive')) {
+			$j('.cmeNavigationItem').removeClass('mobileSubMenuActive');
+		} else {
+			$j('.cmeNavigationItem').removeClass('mobileSubMenuActive');
+			$j(this).parent().addClass('mobileSubMenuActive');
+		}
+	  });
+
+	  $j('body').on("touchstart", '.cmeNavigationItemMenu a', function(e) {
+		  e.preventDefault();
+		  window.location.href = $j(this).attr('href');
+	  });
+
+	  $j('body').on(cmeVal.Event(), '.mobileSubMenuActive > div.cmeNavigationItemMenu > ul.megaMenuContentArea > li.megaMenuNavigationLevelTwo > span', function() {
+		  if ($j(this).parent().hasClass('mobileSubSubMenuActive')) {
+			$j('li.megaMenuNavigationLevelTwo').removeClass('mobileSubSubMenuActive');
+		  } else {
+			$j('li.megaMenuNavigationLevelTwo').removeClass('mobileSubSubMenuActive');
+		  	$j(this).parent().addClass('mobileSubSubMenuActive');
+		  }
+	  });
+	  
+	  
+	  $j("body").on(cmeVal.Event(), "#cmePageMasthead li.cmeLinkLogin > a", function(e) {
+		   e.preventDefault();
+	  });
+	  
+
+	 /*$j('body').on(cmeVal.Event(), 'feedbackButton', function() {
+		 oo_feedback.show();
+	 });*/
+});
+
+// ANIMATE FLY-OUTS
+$j.fn.createMenuAnimation = function() {
+	$j(this).off();
+	$j(this).on({
+		mouseenter: function(e) {
+			$j('.cmeNavigationItemMenu', this).fadeOut(0).fadeIn(300);
+		},
+		mouseleave: function(e) {
+			$j('.cmeNavigationItemMenu', this).fadeOut(300);
+		}
+	});
+};
+
+$j.fn.removeMenuAnimation = function() {
+	$j(this).off();
+};
+
+function processMegaMenuLinkHeadings() {
+	unProcessMegaMenuLinkHeadings();
+	$j('.megaMenuNavigationLevelTwo:not(".megaMenuSectionLink") > span').each(function() {
+		var megaMenuLink;
+		var megaMenuLinkText;
+		if ($j(this).find('a').length > 0) {
+			megaMenuLink = $j(this).find('a').attr('href');
+			megaMenuLinkText = $j(this).find('a').text().replace('›','');
+			$j(this).find('a').css('display','none');
+			if ((megaMenuLinkText != 'View All') && (megaMenuLinkText !== 'View Products') ) {
+				$j(this).find('a').before('<span class="megaMenuFauxSectionLink">' + megaMenuLinkText + '</span>');
+			}
+			$j(this).parent().find('ul:first').prepend('<li class="subSectionLink megaMenuFauxSectionLink"><a href="' + megaMenuLink + '">' + megaMenuLinkText + '</a></li>');
+		}
+	});
+}
+
+function unProcessMegaMenuLinkHeadings() {
+	$j('.megaMenuNavigationLevelTwo:not(".megaMenuSectionLink") > span').each(function() {
+		if ($j(this).find('a').length > 0) {
+			$j(this).find('a').css('display','inline');
+			$j('.megaMenuFauxSectionLink').remove();
+		}
+	});
+}
+
+function processMenuLoginLinks() {
+	if ($j(".cmeLinkLogin").length === 0) {
+		return;
+	}
+	unProcessMenuLoginLinks();
+	if ($j("#cmePageNavigationBar > li#navigationLogin").length === 0) {
+		$j("#cmePageNavigationBar").append("<li id=\"navigationLogin\" class=\"cmeNavigationItem\"><span>Login</span><div id=\"loginMenu\" class=\"cmeNavigationItemMenu cmeLargeMenu cmeRightMenu cmeClearContent\"><ul class=\"megaMenuContentArea cmeClearContent\"></ul></div>");
+		$j("#cmeMenu .cmeLinkLogin > div > ul.cmeLinkList > li").each(function() {
+			var cls = '';
+			if(!$j(this).hasClass("cmeLinkHeading")) {
+				cls = ($j(this).attr("class") !== undefined) ? $j(this).attr("class") : "";
+				$j("#cmePageNavigationBar > #navigationLogin > #loginMenu > ul").append("<li class=\"" + cls + "\">" + $j(this).html() + "</li>");
+			}
+		});
+	}
+}
+
+function unProcessMenuLoginLinks() {
+	if ($j(".cmeLinkLogin").length === 0) {
+		return;
+	}
+	$j("#cmePageNavigationBar").find("#navigationLogin").remove();
+}
+
+function updateMobileMenuLink() {
+	var $jmyTransitionLink = $j('.cmeTransitionLink','#cmeMenu');
+	if($j('html').hasClass('cmeResponsive')) {
+		$jmyTransitionLink.attr('id', 'cmeMobileMenu').removeClass('feedbackButton').removeAttr('rel').addClass('cmeMobileButton').text('Menu');
+		processMegaMenuLinkHeadings();
+		processMenuLoginLinks();
+		$j('.cmeNavigationItem').removeMenuAnimation();
+	} else {
+		$jmyTransitionLink.removeAttr('id').attr('rel','popwin').removeClass('cmeMobileButton').addClass('feedbackButton').text('Feedback');
+		$j('#cmePageNavigation').removeClass('mobileMenuActive').removeClass('mobileMenuDisplayed').removeAttr('style');
+		unProcessMegaMenuLinkHeadings();
+		unProcessMenuLoginLinks();
+		$j('body').removeClass('bodyActive');
+		$j('.cmeNavigationItem').createMenuAnimation();
+	}
+}
+var cmeSearchLabel = "";
+var cmeSearchError = "Enter valid term(s)";
+var cmeHeaderIsResponsive = false;
+var cmeHeaderSpriteWidth = 400;
+var cmeHeaderSpriteHeight = 308;
+
+$j(document).ready(function() {
+
+	var hideSearch = $j("#cmeHeader").attr("data-search-disabled");
+
+	if (hideSearch === 'disabled') {
+		$j('.searchExpander').hide();
+	}
+
+	cmeSearchLabel = $j("#cmeSearch").attr("data-search-text");
+	$j("#searchField").val(cmeSearchLabel);
+
+	if ($j("#cmeHeaderRight input[type=text]").length) {
+
+		$j("#cmeHeader #cmeHeaderRight #cmeSearch").on("focus click", "input[type=text]", function() {
+			$j("#cmeHeaderRight > #cmeSearch").removeClass().addClass("cmeSearchOn");
+			$j("#cmeHeader #cmeHeaderRight #cmeSearch input[type=text]").each(function() {	// loop through all text boxes
+				if ($j.trim(this.value) === cmeSearchLabel || $j.trim(this.value) === cmeSearchError) {
+					this.value = "";
+				}
+			});
+		});
+
+		$j("#cmeHeader #cmeHeaderRight #cmeSearch").on("blur", "input[type=text]", function() {
+			if ($j.trim(this.value) === "" || $j.trim(this.value) === cmeSearchError) {
+				$j("#searchField").val(cmeSearchLabel);
+				$j("#cmeHeaderRight > #cmeSearch").removeClass().addClass("cmeSearchOff");
+				this.value = cmeSearchLabel;
+			}
+		});
+		
+		
+		$j("#cmeHeaderRight #search").submit(function(){
+			var searchStr = $j.trim($j('#searchField').val());
+			if (searchStr === null || searchStr === "" || searchStr === cmeSearchLabel || searchStr === cmeSearchError) {
+				setTimeout(function(){
+					$j('#searchField').val(cmeSearchError);
+					$j("#cmeHeaderRight > #cmeSearch").removeClass().addClass("cmeSearchErr");
+				}, 100);
+				return false;
+			} else {
+				return true;
+			}
+		});
+	}
+	
+	$j("#cmeSearch button").on("click", function(e) {
+	    e.preventDefault();
+		e.stopPropagation();
+	}).on("tap", function(e) {
+		e.preventDefault();
+		e.stopPropagation();	
+		$j("#search").submit();
+	});
+
+	$j("#cmeHeaderRight #cmeSearch").on("click", ".elc-moreResults a", function(e) {
+	    e.preventDefault();
+		e.stopPropagation();
+	}).on("tap", ".elc-moreResults a", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		$j("#search").submit();
+	});
+
+	if ($j("ul.cmePrimaryNav.cmePrimaryNavFixed").length) {	// fixed navigation hacks
+		var fixedHeight = $j("ul.cmePrimaryNav.cmePrimaryNavFixed").height();
+		// fix height of links
+		$j("ul.cmePrimaryNav.cmePrimaryNavFixed > li > a").css("height", fixedHeight - 32);
+		// fix top position of fly out to height of fixed navigation
+		$j("ul.cmePrimaryNav.cmePrimaryNavFixed > li.has-children > div.cmeSecondaryNav").css("top", fixedHeight);
+	}
+
+	// responsive menu
+	$j(window).load(headerHandleResponsify);
+	$j(window).resize(headerHandleResponsify);
+
+	// responsive menu event handling
+	$j("body").on("click", "#cmeNavMobileLink, #cmeNavMobileLinkClose, #cmeNavMobileMask", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	}).on("tap", "#cmeNavMobileLink, #cmeNavMobileLinkClose, #cmeNavMobileMask", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var myMobileTarget = $j(this);	
+		var myMobileNavWrapper = $j('#cmeNavMobile');	
+		
+		if(myMobileTarget.attr("id") === "cmeNavMobileLink"){
+			$j('body').addClass('cmeModalDisplay').css({ "position" : "fixed" });
+			if ($j('#cmeNavMobile > ul').height() > $j(window).height()){
+				myMobileNavWrapper.css({ "overflow-y" : "auto", "height" : $j(window).height() });
+			} else {
+				myMobileNavWrapper.css({ 'height': $j(window).height() });
+			}
+		}
+		
+		if ($j("#cmeNavMobileLink").attr("data-open") !== "true") {
+			$j("body").append("<div id=\"cmeNavMobileMask\" class=\"cmeModalPageOverlay\" />");	// add mask to page
+		} else {
+			$j('body').removeClass('cmeModalDisplay').removeAttr('style');
+			$j("body > #cmeNavMobileMask").remove();
+		}
+		
+		myMobileNavWrapper.toggle("slide", {direction: "left" }, 350, function() {
+			$j("#cmeNavMobileLink").attr("data-open", $j(this).is(":visible"));
+		});
+	});
+
+	$j("body").on("click", "#cmeNavMobile > ul > li.cmeNavMobileReveal > a", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	}).on("tap", "#cmeNavMobile > ul > li.cmeNavMobileReveal > a", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$j(this).parent().find("ul.cmeSecondaryNavMobile").slideToggle(350, function() {			
+			if ($j('#cmeNavMobile > ul').height() > $j(window).height()){
+				$j('#cmeNavMobile').css({ "overflow-y" : "auto", "height" : $j(window).height() });
+			} else {
+				$j('#cmeNavMobile').css({ 'height': $j(window).height() });
+			}
+		});
+		$j(this).parent().toggleClass("cmeNavMobileRevealed");
+	});
+
+	/******************************************************/
+	/* 5.0 NAVIGATION - LOADS FEEDS IN NAVIGATION FLY-OUTS */
+	/*******************************************************/
+	if ($j('#cmeNav').length) {
+		$j(document).on('mouseenter touchstart','.cmePrimaryNav > li', function(e) {
+			var myNavItem = $j(this);
+			var myNavItemID = myNavItem.attr('id');
+			//if ((myNavItem.attr('data-feed-populated')!=='true') && (typeof (google) !== 'undefined')){
+			if (myNavItem.attr('data-feed-populated')!=='true') {
+				$j('.cmeDynamicFeedContent', myNavItem).each(function(){
+					var myDynamicRegion = $j(this);
+					var myDynamicFeedLayout = (((myDynamicRegion.hasAttr('data-feed-layout')) && (myDynamicRegion.attr('data-feed-layout') === "cme-advisories-layout")) ? "cmeMediaBoxContentAdvisoryLayout" : "cmeMediaBoxContentDefaultLayout");
+					var myDynamicRecordCount = (((myDynamicRegion.hasAttr('data-feed-record-count')) && (isNumber(myDynamicRegion.attr('data-feed-record-count')) === true)) ? parseInt(myDynamicRegion.attr('data-feed-record-count')) : 0);
+					var myDynamicFeedShowDate = ((myDynamicRegion.hasAttr('data-feed-show-date') === true) ? myDynamicRegion.attr('data-feed-show-date') : false);
+					var myDynamicFeedShowDescription = ((myDynamicRegion.hasAttr('data-feed-show-description') === true) ? myDynamicRegion.attr('data-feed-show-description') : false);
+					if (myDynamicRecordCount > 0){
+						switch (myDynamicRegion.attr('data-feed-type')){
+							case "cme-market-data":
+								//embedNavRSSFeed('feeds.feedburner.com/advisorymran',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('advisory',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+							case "cme-news":
+								//embedNavRSSFeed('feeds.feedburner.com/mediaroom/CMsF',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('mediaroom',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+							case "cme-careers":
+								//embedNavRSSFeed('feeds.feedburner.com/CmeGroupJobFeed',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('careers',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+							case "cme-open-markets":
+								//embedNavRSSFeed('openmarkets.cmegroup.com/feed/',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('openmarkets',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+							case "cme-market-reports":
+								//embedNavRSSFeed('www.cmegroup.com/rss/commentary-home-insights-analysis.rss',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('marketreports',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+							case "cme-mrans":
+								//embedNavRSSFeed('www.cmegroup.com/rss/MRANsRSS.rss',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('mran',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+							case "cme-clearing-advisories":
+								//embedNavRSSFeed('www.cmegroup.com/rss/ClearingAdvisoriesRSS.rss',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								embedNavRSSFeed('clearing',myDynamicFeedLayout,myDynamicRecordCount,myDynamicFeedShowDate,myDynamicFeedShowDescription,myDynamicRegion);
+								break;
+						}
+					}
+				});
+				myNavItem.attr('data-feed-populated', 'true');
+			}
+		});
+	}
+});
+
+// responsive handling of header
+function headerHandleResponsify() {
+
+	if (isResponsiveMode() && !cmeHeaderIsResponsive) {
+		headerResponsify(); cmeHeaderIsResponsive = true;
+	} else if(!isResponsiveMode() && cmeHeaderIsResponsive) {
+		headerUnresponsify();  cmeHeaderIsResponsive = false;
+	}
+
+	if (isResponsiveMode() && $j("#cmeNavMobile").length) {
+		$j("#cmeNavMobile").css("height", $j(document).height());
+	}
+}
+
+function headerResponsify() {
+
+	// create responsive menu link
+	$j("#cmeHeader").append("<a href=\"#\" id=\"cmeNavMobileLink\">Menu</a>");
+
+	// does responsive menu exist?
+	if (! $j("#cmeNavMobile").length) {
+		$j("body").append("<div id=\"cmeNavMobile\"><ul /></div>");
+		headerResponsifyLinks();
+	}
+
+}
+
+function headerUnresponsify() {
+
+	// remove link to mobile header and logo
+	$j("#cmeHeader > #cmeNavMobileLink").remove();
+
+	// hide responsive menu
+	$j("#cmeNavMobile").hide();
+	$j("#cmeNavMobileMask").remove();
+
+}
+
+function headerResponsifyLink(link) {
+	if ($j(link)[0] !== undefined) {
+		return $j(link)[0].outerHTML;
+	}
+}
+
+
+$j.expr[":"].containsExact = function (obj, index, meta, stack) {
+  return (obj.textContent || obj.innerText || $j(obj).text() || "") == meta[3];
+};
+
+function headerResponsifyLinks() {
+
+	var cmeNavSelector = "#cmeNav > ul.cmePrimaryNav > li > a:not(:containsExact('Read more'))";
+	// logo with close link
+	$j("#cmeNavMobile > ul").append("<li id=\"cmeNavMobileLogo\"><span /><a id=\"cmeNavMobileLinkClose\" href=\"#\">Close</a></li>");
+
+	if ($j('.cmePineappleHeader').length) {
+		cmeNavSelector = "#cmeNav ul.cmePrimaryNav > li > a:not(:containsExact('Read more'))";
+	}
+
+	// generate top links
+	$j(cmeNavSelector).each(function() {
+		// get secondary links
+		var secondaryLinks = $j(this).parent().find("div.cmeSecondaryNav a");
+
+		// filter out links with Read more as text
+		secondaryLinks = $j(secondaryLinks).filter(function(index) { return $j(this).text() !== "Read more"; });
+
+		// filter out images
+		secondaryLinks = $j(secondaryLinks).filter(function(index) { return $j(this).html().trim().substr(0, 4) !== "<img"; });
+
+		// filter out children of extended links (cmeExtendedLink)
+		secondaryLinks = $j(secondaryLinks).filter(function(index) { return ! $j(this).closest(".section").prev(".cmeTitle").find("span.cmeExtendedLink").length; });
+
+		// filter out dynamic links
+		secondaryLinks = $j(secondaryLinks).filter(function(index) { return ! $j(this).closest(".cmeDynamicContent").length; });
+		
+		// loop through links and handle special cases
+		$j(secondaryLinks).each(function() {
+			if ($j(this).parent().hasClass("cmeExtendedLink")) {	// extended link, take title text
+				$j(this).addClass("cmeNavMobileExtended");
+				$j(this).attr("data-text", $j(this).text());	// store link text in data attribute
+				$j(this).text($j(this).parent().prev().text());	// set link text as title
+			}
+			if ($j(this).closest("ul").siblings("a").length) {	// indent child links
+				$j(this).addClass("cmeNavMobileIndent");
+			}
+			if ($j(this).parent().hasClass("cmeAssetClass")) {	// asset class links
+				$j(this).addClass("cmeNavMobileAssetClass");
+				$j(this).addClass("cmeNavMobileIndent");
+				$j(this).addClass($j(this).parent().attr("class"));
+			}
+		});
+
+		// handle reveal css class
+		var linkCls = "";
+
+		if (($j(this).attr("href") === "" || $j(this).attr("href") === undefined) && $j(secondaryLinks).length) {
+			linkCls = "cmeNavMobileReveal";
+		}
+
+		// create primary link
+		var link = $j("<li class=\"" + linkCls + "\"></li>");
+		link.append(headerResponsifyLink($j(this)));
+
+		// create child links
+		if ($j(secondaryLinks).length) {
+			var secondaryLink = $j("<ul class=\"cmeSecondaryNavMobile\" />");
+			$j(secondaryLinks).each(function() {
+				secondaryLink.append("<li>" + headerResponsifyLink($j(this)) + "</li>");
+			});
+			link.append(secondaryLink);
+		}
+
+		$j("#cmeNavMobile > ul").append(link);
+	});
+
+	// Create regional sites menu
+	if ($j('#cmePineappleHeaderContainer #cmeHeader .regionalSites').length) {
+        var translatedRegionalSitesLabel=$j('#cmePineappleHeaderContainer #cmeHeader .regionalSites .translated-title').html()
+        var h = [];
+        h.push('<li class="cmeNavMobileReveal">');
+        h.push('    <a style="color: rgb(255, 255, 255); height: 0px;">' + translatedRegionalSitesLabel + '</a>');
+        h.push('    <ul class="cmeSecondaryNavMobile" style="display: none;">');
+        var hMenuItem = [];
+        $j('#cmePineappleHeaderContainer #cmeHeader .regionalSites .languages li').each(function() {
+        	var url = $j(this).find('a').attr('href');
+        	var label = $j(this).find('a').html().replace(/(^ *| *$)/g,'');
+        	var labelMobile = $j(this).attr('data-mobileLabel') ? $j(this).attr('data-mobileLabel').replace(/(^ *| *$)/g,'') : '';
+        	var newTab = $j(this).attr('data-newTab') && $j(this).attr('data-newTab').replace(/(^ *| *$)/g,'') === 'true';
+
+        	hMenuItem.push('<li>');
+        	hMenuItem.push('<a');
+        	if (newTab) {
+	        	hMenuItem.push(' target="_blank" ');
+        	}
+        	hMenuItem.push(' href="');
+        	hMenuItem.push(url);
+        	hMenuItem.push('">');
+        	hMenuItem.push(labelMobile !== ''  ? labelMobile : label);
+        	hMenuItem.push('</a>');
+        	hMenuItem.push('</li>');
+        });
+        h.push(hMenuItem.join(''));
+        h.push('    </ul>');
+        h.push('</li>');
+    	var regionalSiteslink = $j(h.join(''));
+    	$j("#cmeNavMobile > ul").append(regionalSiteslink);
+	}
+
+	// create login menu
+	var hideLogin = $j("#cmeHeader").attr("data-hide-login");
+
+	var loginlink = $j("<li class=\"cmeNavMobileReveal mobile-login\"></li>");
+
+	loginlink.addClass('loginMobile');
+	loginlink.append("<a href=\"#\">Login</a>");
+
+	var loginlinks = $j("<ul class=\"cmeSecondaryNavMobile\" />");
+	$j("#cmeMenuLogin > ul > li").each(function(index, el){
+	    if (hideLogin !== 'true' || (hideLogin === 'true' && index !== 0)) {
+            loginlinks.append(headerResponsifyLink($j(this)));
+        }
+	});
+
+	loginlink.append(loginlinks);
+
+	$j("#cmeNavMobile > ul").append(loginlink);
+
+	$j("#cmeNavMobile > ul > li#cmeNavMobileLogo").after(loginlink);
+	
+	// menu jump links for microsites
+    if ($j('.theme-microsites').length) {
+        $j('#cmeNavMobile a')
+            .filter(function(index, el) {
+                return el.hash.length > 1
+                    && !el.hash.match(/[=]/ig)
+                    && !el.rel;
+            })
+            .on('click', function(e) {
+                e.preventDefault();
+
+                var $target = $j('a[name="'+this.hash.slice(1)+'"]');
+
+                if ($target.length) {
+                    $j('#cmeNavMobileLinkClose').trigger('tap');
+                    window.location.hash = this.hash;
+                    $j(window).scrollTop($target.offset().top - getTopOffset());
+                } else {
+                    if (window.console) {
+                        console.warn('No target found where to jump for ' + this.hash);
+                    }
+                }
+            });
+    }
+
+	// tidy up desktop menu
+	$j("#cmeNav a.cmeNavMobileIndent").removeClass("cmeNavMobileIndent");	// remove indent classes
+	$j("#cmeNav a.cmeNavMobileAssetClass").attr("class", "");	// remove asset classes
+	if ($j("#cmeNav a.cmeNavMobileExtended").length) {
+		$j("#cmeNav a.cmeNavMobileExtended").each(function() {	// reset extended links text
+			$j(this).text($j(this).attr("data-text"));
+		});
+	}
+}
+
+$j(document).ready(function(){
+    var self = this;
+
+	//interactive map
+	$j(".cmeFooterGlobalMap img").mouseover(function() {
+        // jQuery objects
+        var $img = $j(this), $title = $j("#mapTitle");
+        // Local vars
+		var leftPos = $img.position().left + 12;
+		$title.hide().css({ "left": leftPos + "px", "top": $img.css("top") }).html($img.attr("alt")).show();
+        $img.attr("src","/etc/clientlibs/cmegroup/cmegroupClientLibs/images/mega-footer-map-marker-over50.png");
+		$j("#cmeFooterGlobalMapLocations li#" + $img.attr("id").replace("-pointer","")).addClass("cmeFooterRollover");
+	});
+
+	$j(".cmeFooterGlobalMap img").mouseout(function() {
+		var $img = $j(this), $title  = $j("#mapTitle");
+		$title.hide();
+		$img.attr("src","/etc/clientlibs/cmegroup/cmegroupClientLibs/images/mega-footer-map-marker50.png");
+		$j("#cmeFooterGlobalMapLocations li#" + $img.attr("id").replace("-pointer","")).removeClass();
+	});
+
+	$j("#cmeFooterGlobalMapLocations ul li").mouseover(function(){
+		var $title  = $j("#mapTitle"),imageId = $j(".cmeFooterGlobalMap img#" + $j(this).attr("id") + "-pointer" ),leftPos = imageId.position().left + 12;
+		$title.hide().css({ "left": leftPos + "px", "top": imageId.css("top")}).html(imageId.attr("alt")).show();
+		imageId.attr("src","/etc/clientlibs/cmegroup/cmegroupClientLibs/images/mega-footer-map-marker-over50.png");
+		$j(this).addClass("cmeFooterRollover");
+	});
+
+	$j("#cmeFooterGlobalMapLocations ul li").mouseout(function(){
+		$j("#mapTitle").hide();
+		var imageId = $j(".cmeFooterGlobalMap img#" + $j(this).attr("id") + "-pointer" );
+		imageId.attr("src","/etc/clientlibs/cmegroup/cmegroupClientLibs/images/mega-footer-map-marker50.png");
+		$j(this).removeClass();
+	});
+	//end interactive map
+
+	//feedback form
+	function feedbackFormUrl(myForm) {		
+		if ($j('#cmeFeedbackURL', myForm).length > 0) {
+			$j('#cmeFeedbackURL', myForm).attr('value', window.location.href);
+		}	
+		//HANDLE FORM SUBMIT WITH NO JS				
+		if($j('.cmeFeedbackFormRedirect', myForm).length){
+			$j('.cmeFeedbackFormRedirect', myForm).attr("value", "false");
+		}			
+	}
+	//end feedback form	
+
+	//feedback form submission messages, creates markup	with message
+	function submitSuccess() {
+		$j('.cmeFormSubmissionFeedback').remove();
+		$j( ".cmeFeedbackForm" ).after("<div class='cmeFormSubmissionFeedback'>Thank you, your feedback has been submitted.</div>");
+	}
+	function submitFailure() {
+		$j('.cmeFormSubmissionFeedback').remove();
+		$j( ".cmeFeedbackForm" ).after("<div class='cmeFormSubmissionFeedback'>We are sorry, there is a problem. Your feedback can't be submitted right now.</div>");
+	}
+	
+	$j('#cmeFooterSubmitButton').on('click', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+	}).on('tap', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$j(this).parents('form').submit();
+	});
+
+	// form validation
+    $j('.cmeFeedbackForm').on('submit', validateSubmit);
+
+    function validateSubmit(e) {
+		e.preventDefault();
+		var myFeedbackForm = this;
+		if ($j('#cmeFeedbackFormScreenWidth',myFeedbackForm).length) {
+			//document.getElementById('cmeFeedbackFormScreenWidth').value = screen.width;
+			$j('#cmeFeedbackFormScreenWidth',myFeedbackForm).attr('value',screen.width);
+		}
+		if ($j('#cmeFeedbackFormScreenHeight',myFeedbackForm).length) {
+			//document.getElementById('cmeFeedbackFormScreenHeight').value = screen.height;
+			$j('#cmeFeedbackFormScreenHeight',myFeedbackForm).attr('value',screen.height);
+		}
+
+		if ($j('#cmeFeedbackFormFlashVersion',myFeedbackForm).length) {
+			if ($j('html').hasClass('cme-flash')){
+				//document.getElementById('cmeFeedbackFormFlashVersion').value = $j('html').attr("class").match(/cme-flash-(\d*)/)[1];
+				$j('#cmeFeedbackFormFlashVersion',myFeedbackForm).attr('value',$j('html').attr("class").match(/cme-flash-(\d*)/)[1]);
+			} else {
+				$j('#cmeFeedbackFormFlashVersion',myFeedbackForm).attr('value','No Flash');
+			}
+		}		
+
+		var blnSubmitForm = true;
+		var thisForm = $j(this);
+		var intTextFieldSize = 100, intTextAreaSize = 500;
+		var thisFieldMaxLength = "";
+		
+		feedbackFormUrl(thisForm);
+		
+		$j('label', thisForm).each(function(){
+			var thisLabel = $j(this);
+			var thisFormControl = $j('[name="'+thisLabel.attr('for')+'"]', thisForm);
+			var isRequiredField = false;
+			if(thisFormControl.attr('data-field-status') === "required"){
+				isRequiredField = true;
+			}
+
+			switch(thisFormControl.attr('data-field-type')){
+				case "text":
+					thisFieldMaxLength = ((thisFormControl.attr('data-field-type') === "small-text") ? intTextFieldSize:intTextAreaSize);
+					if(isValidText(thisFormControl.val(), isRequiredField, thisFieldMaxLength) === false){
+						blnSubmitForm = false;
+						thisFormControl.addClass('cmeErrorField');
+						thisLabel.addClass('cmeErrorLabel');
+					} else {
+						thisFormControl.removeClass('cmeErrorField');
+						thisLabel.removeClass('cmeErrorLabel');
+					}
+					break;
+				case "email":
+					thisFieldMaxLength = ((thisFormControl.attr('data-field-type') === "small-text") ? intTextFieldSize:intTextAreaSize);
+					if(isValidEmail(thisFormControl.val(), isRequiredField, thisFieldMaxLength) === false){
+						blnSubmitForm = false;
+						thisFormControl.addClass('cmeErrorField');
+						thisLabel.addClass('cmeErrorLabel');
+					} else {
+						thisFormControl.removeClass('cmeErrorField');
+						thisLabel.removeClass('cmeErrorLabel');
+					}
+					break;
+				case "dropdown":
+					if ((isRequiredField === true) && (thisFormControl.val() === '0')){
+						blnSubmitForm = false;
+						thisLabel.addClass('cmeErrorLabel');
+					} else {
+						thisLabel.removeClass('cmeErrorLabel');
+					}
+					break;
+				case "checkbox":
+					if ((thisFormControl.attr('data-field-status') === "required") && (!thisFormControl.is(':checked'))) {
+						blnSubmitForm = false;
+						thisLabel.addClass('cmeErrorLabel');
+					} else {
+						thisLabel.removeClass('cmeErrorLabel');
+					}
+					break;
+				case "radio":
+					if ((thisFormControl.attr('data-field-status') === "required") && (!thisFormControl.is(':checked'))) {
+						blnSubmitForm = false;
+						thisLabel.addClass('cmeErrorLabel');
+					} else {
+						thisLabel.removeClass('cmeErrorLabel');
+					}
+					break;
+			}
+		});
+
+		if (blnSubmitForm === true){
+		    grecaptcha.execute();
+		}
+		return false;
+	}
+
+
+    function submitForm() {
+        var thisForm = $j('.cmeFeedbackForm');
+		var myDataString = $j('.cmeFeedbackForm').serialize() + '&FeedbackRating=' + ($j('.cmeHappinessIcon.radio-selected').length ? $j('.cmeHappinessIcon.radio-selected').siblings('input:radio').val() : '');
+        $j.ajax({
+            url: thisForm.attr('action'),
+            data: myDataString,
+            type: 'POST',
+            success: function(data){
+                submitSuccess();
+                $j(thisForm)[0].reset();
+                $j('.cmeHappinessIcon').each(function(){
+                    var radioOption = $j(this);
+                    radioOption.removeClass('radio-selected');
+                    var radioOptionControl = radioOption.prev('input:radio');
+                    radioOptionControl.attr('checked',false);
+                });
+
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                submitFailure();
+                $j(thisForm)[0].reset();
+                $j('.cmeHappinessIcon').each(function(){
+                    var radioOption = $j(this);
+                    radioOption.removeClass('radio-selected');
+                    var radioOptionControl = radioOption.prev('input:radio');
+                    radioOptionControl.attr('checked',false);
+                });
+            }
+        });
+    }
+    
+    window.submitFeedbackForm = submitForm;
+
+
+	function isValidEmail(myFieldValue,isRequired,textLength) {
+		var emailRegEx = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+		var blnResult = true;
+		if (myFieldValue.length > textLength) {
+			blnResult = false;
+		}
+		if(isRequired === true) {
+			if(myFieldValue.length === 0){
+				blnResult = false;
+			}
+		}
+		if(myFieldValue.length !== 0){
+			if(!emailRegEx.test(myFieldValue)){
+				blnResult = false;
+			}
+		}
+
+		return blnResult;
+	}
+
+	function isValidText(myFieldValue,isRequired,textLength) {
+		var blnResult = true;
+		if (myFieldValue.length > textLength) {
+			blnResult = false;
+		}
+		if ((isRequired === true) && (myFieldValue.length === 0)){
+			blnResult = false;
+		}
+		return blnResult;
+	}
+	function IsNumeric(strNumber){
+		var blnResult = true;
+		var numericRegExp = /^\d*\.{0,1}\d+$/;
+		if(numericRegExp.test(strNumber)!==true){
+			blnResult = false;
+		}
+		return blnResult;
+	}
+	function IsAlphaNumeric(strString){
+		var blnResult = true;
+		var alphaRegExp = /^[\w ]{0,}$/;
+		if (strString.length < 10) {blnResult=false;}
+		if (alphaRegExp.test(strString)!==true){
+			blnResult = false;
+		}
+		return blnResult;
+	}
+	function isDate(dtDate) {
+		var blnResult = true;
+		var dateRegEx = /^\d{1,2}\/\d{1,2}\/\d{4}$/ ;
+		if (!dateRegEx.test(dtDate)) {
+			blnResult = false;
+		}
+		return blnResult;
+	}
+	//end form validation
+
+
+});
+
+$j(function() {
+	$j('input:radio', '.cmeFooterRating').hide().each(function() {
+		var label = $j("label[for=" + '"' + this.id + '"' + "]").text();
+		$j('<a class="cmeHappinessIcon ' + this.name + '" id="' + this.id + '" href="#"' + (this.checked ? ' data-selected="radio-checked"' : '') + '><span class="radio"></span></a>').insertAfter(this);
+	});
+});
+
+/* TRAPPING HAPPINESS LINK */
+$j('#cmeFeedbackFormFooter').on('click', '.cmeHappinessIcon', function(e) {
+    e.preventDefault();
+}).on('tap', '.cmeHappinessIcon', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	$j('.cmeHappinessIcon').each(function(){
+		var radioOption = $j(this);
+		radioOption.removeClass('radio-selected');
+		var radioOptionControl = radioOption.prev('input:radio');
+		radioOptionControl.attr('checked',false);
+	});
+	$check = $j(this).prev('input:radio');
+	$check.attr('checked', true);
+	$j(this).addClass('radio-selected');
+}).on('keydown', '.cmeHappinessIcon', function(e) {
+	if ((e.keyCode ? e.keyCode : e.which) === 32) {
+		$j(this).trigger('tap');
+	}
+});
+
+/*************************************/
+/* APPLY LINK-EVENTS AND GA TRACKING */
+/*************************************/
+$j(document).ready(function(){
+	/* GIVE ALL LINKS THE APPROPRIATE REL-TYPE */
+	$j('a').each(function() {
+		var myLink = $j(this);
+		var targetURL = (myLink.attr('href') === "undefined") ? ('') : (myLink.attr('href'));
+		var myLinkRegEx = new RegExp('^((f|ht)tps?:)?//(?!' + location.host + ')');
+		var myAbsoluteLinkRegEx = new RegExp("^(http|https|ftp):\\/\\/");
+		var currentRel = myLink.attr('rel'), mySeparator = ", ";
+		if (typeof currentRel === 'undefined' || currentRel === false) {
+			currentRel = "";
+			mySeparator = "";
+		}
+		if (this.href.indexOf('mailto:') !== -1) {
+			if (currentRel === ""){
+				myLink.attr('rel', "mail");
+			} else if (currentRel.indexOf("external") !== -1){
+				if (currentRel.indexOf("mail") !== -1){
+					currentRel = currentRel.replace("external", "");
+				} else {
+					currentRel = currentRel.replace("external", "mail");
+				}
+				myLink.attr('rel', currentRel);
+			} else if (currentRel.indexOf("mail") === -1) {
+				myLink.attr('rel', $j.trim(currentRel + mySeparator + "mail"));
+			}
+			myLink.attr('target', "_blank");
+		} else if ((currentRel.indexOf("media-save") > -1) || (currentRel.indexOf("media-embed") > -1)) {
+			if (currentRel === "media-save"){
+				myLink.attr('target', "_blank");
+			}
+		} else if ((/\.(docx*|xlsx*|pptx*|exe|rar|zip|pdf|xpi|mp3|mp4|flv|wmv)$/i).test(this.href) === true) {
+			if (currentRel === ""){
+				myLink.attr('rel', "download");
+			} else if (currentRel.indexOf("external") !== -1){
+				if (currentRel.indexOf("download") !== -1){
+					currentRel = currentRel.replace("external", "");
+				} else {
+					currentRel = currentRel.replace("external", "download");
+				}
+				myLink.attr('rel', currentRel);
+			} else if (currentRel.indexOf("download") === -1) {
+				myLink.attr('rel', $j.trim(currentRel + mySeparator + "download"));
+			}
+			myLink.attr('target', "_blank");
+		} else if ((/\.(jpg*|png*|gif*|jpeg)$/i).test(this.href) === true) {
+			if ((currentRel === "") || (currentRel === "external")){
+				myLink.attr('rel', "lightbox");
+			} else if (currentRel.indexOf("external") !== -1){
+				if (currentRel.indexOf("download") !== -1){
+					currentRel = currentRel.replace("external", "");
+				} else {
+					currentRel = currentRel.replace("external", "lightbox");
+				}
+				myLink.attr('rel', currentRel);
+			} else if (currentRel.indexOf("lightbox") === -1) {
+				myLink.attr('rel', $j.trim(currentRel + mySeparator + "lightbox"));
+			}
+		} else if (((myAbsoluteLinkRegEx.test(targetURL)) && (myLinkRegEx.test(targetURL))) && ((currentRel.indexOf("external") === -1))){
+			if (currentRel === ""){
+				myLink.attr('rel', "external");
+			} else if ((currentRel.indexOf("download") === -1) && (currentRel.indexOf("popwin") === -1) && (currentRel.indexOf("popup") === -1) && (currentRel.indexOf("mail") === -1)){
+				myLink.attr('rel', $j.trim(currentRel + mySeparator + "external"));
+			}
+			myLink.attr('target', "_blank");
+		} else if(currentRel.indexOf('priceChart') !== -1){
+			if(typeof(getChart) !== 'function'){
+				myLink.addClass('cmeElementDisabled');
+			}
+		} else if (currentRel === "external" || currentRel === "download" || currentRel === "popwin" || currentRel === "mail" || currentRel === "tel" || currentRel === "chartPopup"){
+			myLink.attr('target', "_blank");
+		}
+	});
+});
+
+if ($j(document).on) {
+	$j(document).on(cmeVal.Event(), '.ui-widget-overlay', function(e) {
+	    $j(".ui-dialog-titlebar-close").trigger('click');
+	});
+}
+
+/* FIRE GOOGLE TRACKING FOR EVENTS AND PAGE VIEWS */
+function fireGTMTracking(trackingType, trackingParameters) {
+	switch (trackingType) {
+		case "event":
+			dataLayer.push({'event': trackingParameters[0], 'eventCategory': trackingParameters[1], 'eventAction': trackingParameters[2], 'eventLabel':trackingParameters[3], 'eventValue':trackingParameters[4]});
+			//console.log('_trackEvent - ' +  trackingParameters[0] + ' - ' + trackingParameters[1] + ' - ' + trackingParameters[2] + ' - ' + trackingParameters[3] + ' - ' + trackingParameters[4]); // To be removed for go-live
+			break;
+		//case "page":
+			//dataLayer.push({'_trackPageview', trackingParameters[0]});
+			//break;
+	}
+}
+
+
+/* TRAPPING EXTERNAL LINKS */
+$j('#cmePageWrapper').on('click', 'a[rel*=external]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	var windowTarget = this.href;
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('outBoundLinkClick', 'outBoundLink', 'click', windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+    window.open(windowTarget, "_blank");
+});
+
+/* TRAPPING DOWNLOAD CLICKS */
+$j('#cmePageWrapper').on('click', 'a[rel*=download]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	var myDownloadLink = $j(this);
+	var windowTarget = this.href;
+	var myDownloadType;	
+	if (myDownloadLink.hasAttr("data-download-type")){
+		myDownloadType = myDownloadLink.attr("data-download-type").toUpperCase();
+	} else {
+		myDownloadType = windowTarget.slice(windowTarget.indexOf(".")+1).toUpperCase();
+	}	 
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('downloadLinkClick', 'file-download', 'click', myDownloadType + " : " + windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+    window.open(windowTarget, "_self");
+});
+
+/* TRAPPING EMAIL LINK CLICKS */
+$j('#cmePageWrapper').on('click', 'a[rel*=mail]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();	
+	var windowTarget = this.href;
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('mailToLinkClick', 'mailTo', 'click', windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+    window.open(windowTarget, "_blank");
+});
+
+
+/*** MODAL AND LIGHTBOX CLICKS ***/
+/* TRAPPING LIGHTBOX LINK CLICKS */
+$j('#cmePageWrapper').on('click', 'a[rel*=imageLightbox]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();	
+	var windowTarget = this.href;
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('lightboxLinkClick', 'lightbox', 'click', windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+	if ($j('html').hasClass('cmeResponsive')) {
+		window.open(windowTarget, "_blank");
+	}
+});
+
+/* TRAPPING MODAL LINK CLICKS */
+$j('#cmePageWrapper').on('click', 'a[rel*=popup], a[rel*=iframepopup]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	var windowTarget = this.href;
+	var windowTitle = this.title;
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('modalLinkClick', 'modal', 'click', windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+
+	if ($j(window).width() < 800) {
+		window.open(windowTarget, "_blank");
+	} else {
+		openModalWindow(windowTarget, windowTitle,
+			this.rel === 'iframepopup', $(this).data('popup-size'));
+	}
+});
+
+
+/* TRAPPING POPUP LINK CLICKS */
+$j('#cmePageWrapper').on('click', 'a[rel*=popwin]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	var myLink = $j(this);
+	var windowTarget = this.href;
+	var windowTitle = this.title;
+	var showToolbar = false;
+	var showLocation = false;
+	var showDirectories = false;
+	var showStatus = false;
+	var showMenubar = false;
+	var showScrollbars = false;
+	var isResizeable = false;
+	var hasHistory = false;
+	var popupWidth, popupHeight, mobileTarget;
+	if ((myLink.hasAttr('data-width')) && (myLink.hasAttr('data-height'))){
+		popupWidth = myLink.attr('data-width');
+		popupHeight = myLink.attr('data-height');
+	} else {
+		popupWidth = (screen.width/3);
+		popupHeight = (screen.height/3);
+	}
+	if (myLink.hasAttr('data-mobile-url')){
+		mobileTarget = myLink.attr('data-mobile-url');
+	} else {
+		mobileTarget = windowTarget;
+	}
+
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('popupLinkClick', 'popup', 'click', windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+
+	if ($j('html').hasClass('cmeResponsive')) {
+		window.open(mobileTarget, "_blank");
+	} else {
+		openPopupWindow(windowTarget,windowTitle,showToolbar,showLocation,showDirectories,showStatus,showMenubar,showScrollbars,isResizeable,hasHistory,popupWidth,popupHeight);
+	}
+});
+
+/* TRAPPING TELEPHONE LINK CLICKS */
+$j('#cmePageWrapper').on('click', 'a[href^="tel:"]', function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	var windowTarget = this.href;
+	if (typeof(dataLayer) !== "undefined"){
+		var gtmArray = new Array();
+		gtmArray.push('telephoneLinkClick', 'telephone', 'click', windowTarget);
+		fireGTMTracking('event', gtmArray);
+	}
+	window.open(windowTarget, "_blank");
+});
+
+/* TRAPPING DYNAMIC FORM SELECT BOXES */
+$j('#productTabs').on("change", 'form.cmeDynamicForm select', function() {
+	var label = $j("label[for='"+$j(this).attr('id')+"']");
+	var selectedValue = $j('option:selected', this).text();
+	var val = $j(this).val();
+	if (val !== '0') {
+		if (typeof(dataLayer) !== "undefined"){
+			var gtmArray = new Array();
+			gtmArray.push('dropdownChange', 'dropdown', 'change', window.location);
+			fireGTMTracking('event', gtmArray);
+		}
+		return;
+	}
+});
+
+/* HANDLING SELECTS ON IOS */
+$j('#cmePageWrapper').on("touchstart", 'select', function(e) {
+	$j(this).focus();
+	if (($j('html').hasClass('cme-iphone')) || (($j('html').hasClass('cme-ipad')))){
+	e.preventDefault();
+	e.stopPropagation();
+	}
+	/*$.Finger.preventDefault = true;
+	setTimeout( function() { $.Finger.preventDefault = false; }, 1000);*/
+});
+
+/* TRAPPING MOBILE FORM JUMP MENU SELECT BOXES */
+$j('#cmePageWrapper').on("change", '.cmeJumpMenu', function() {
+	var myJumpMenu = $j(this);
+	var selectedValueLabel = $j('option:selected', this).text();
+	var selectedValue = $j(this).val();
+	if (selectedValue !== '0') {
+		if (typeof(dataLayer) !== "undefined"){
+			var gtmArray = new Array();
+			gtmArray.push('jumpMenuChange', 'jump menu', 'change', "Jump menu: " + selectedValue + ' ' + selectedValueLabel);
+			fireGTMTracking('event', gtmArray);
+		}
+		$j("option", myJumpMenu).each(function(){
+			if ($j(this).text() !== selectedValueLabel){
+				$j(this).removeAttr("selected");
+			} else {
+				$j(this).attr("selected", "selected");
+			}
+		});
+		window.location = selectedValue;
+	}
+});
+
+
+
+if (typeof (google) !== 'undefined') {
+	google.load('feeds', '1');
+}
+
+function initRegisteredComponent() {
+	if (window.jsiIncludes) {
+		for(var i = 0; i < window.jsiIncludes.length; i++) {
+			var include = window.jsiIncludes[i];
+			if (!include.resolved) {
+				$j.ajax(
+					{
+						async : false,
+						success : function(data) {
+							$j('#' + include.id).html(data);
+						},
+						url : include.url
+					}
+				);
+				include.resolved = true;
+			}
+		}
+	}
+
+	// init registered component
+	if (window.cmeRequestManagers) {
+		$j.each(window.cmeRequestManagers, function(index, value) {
+			if (!value.handlerObj) {
+				value.handlerObj = new CmeRequestManager(value);
+			}
+		});
+	}
+	
+	if (window.cmeComponents) {
+		// does this page contain a tab component?
+		$j.each(window.cmeComponents, function(index, value) {
+			value.visible = true; // set default value to true
+			if ($j(".cmeDynamicTabs").length) {	// ensure this only searches within .cmeDynamicTabs
+				var container = value.tableId;
+				if (container !== "") {
+					if ($j(container).length) {
+						if ($j(container).closest(".cmeTabPanel").length) {
+							if ($j(container).closest(".cmeTabPanel").parent(".cmeDynamicTabs").length) {
+								value.visible = false;
+								value.tab = $j(container).closest(".cmeTabPanel").attr("id");
+							}
+						}
+					}
+				}
+			}
+		});
+		$j.each(window.cmeComponents, function(index, value) {
+			if (!value.initialised && value.visible) {
+				$j.fn.initResponsiveHandler(value);
+				value.initialised = true;
+			}
+		});
+	}
+}
+
+function isIE() {
+    var isMSIE = navigator.appName == 'Microsoft Internet Explorer',
+        isNetscape = navigator.appName === 'Netscape',
+        hasTrident = (new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})")).exec(navigator.userAgent) !== null;
+    return (isMSIE || (isNetscape && hasTrident));
+}
+
+var allowJsStriping = false;
+
+$j(document).ready(function(){
+	initRegisteredComponent();	
+	
+	if ($j('html').hasClass('cme-nth-selector')) { 
+		allowJsStriping = false;
+	} else {
+		allowJsStriping = true;
+	}
+			
+	/* ADD FASTCLICK HANDLING */
+	if (typeof FastClick !== 'undefined') {
+		FastClick.attach(document.body);
+	}
+	
+	//HANDLE THE FOOTER MAP
+	$j("#cmeMegaFooterMapInnerArea img").mouseover(function() {
+		var leftPos = $j(this).position().left + 12;
+		$j("#mapTitle").hide();
+		$j("#mapTitle").css("left", leftPos + "px");
+		$j("#mapTitle").css("top", $j(this).css("top"));
+		$j("#mapTitle").html($j(this).attr("alt"));
+		$j("#mapTitle").show();
+		$j(this).attr("src","/etc/clientlibs/cmegroup/cmegroupClientLibs/images/mega-footer-map-marker-over.png");
+	});
+
+	$j("#cmeMegaFooterMapInnerArea img").mouseout(function() {
+		$j("#mapTitle").hide();
+		$j("#cmeMegaFooterMapInnerArea img").attr("src","/etc/clientlibs/cmegroup/cmegroupClientLibs/images/mega-footer-map-marker.png");
+	});
+	
+	/* HANDLE DATA WIDGET TOOL TIPS WITH TOP POSITION */
+	if ($j("div.cmeDataWidget div.cmeToolTip.cmeToolTipTop").length) {	
+		$j("#cmePageWrapper").on("mouseenter mouseleave", "div.cmeDataWidget a:has(div.cmeToolTip.cmeToolTipTop)", function() {
+			// position tooltip above relative position of element to parent
+			var tt = $j(this).find("div.cmeToolTip");
+			$j(tt).css("top", $j(this).position().top - $j(tt).height()).addClass("active");
+		});
+	}
+
+	/* HANDLE PRODUCT PAGE TOGGLE CONTROLS */
+	$j('ul.cmeToggleControl').each(function(){
+		var myToggleControl = $j(this);
+		$j('li:last-child', myToggleControl).addClass('cmeLastChild');
+	});
+
+	/* HANDLE SPLIT LIST DISPLAYS */
+	$j("ul.cmeSplitList").each(function() {
+		var list = $j(this);
+		var existingSize = $j(this).children().size();
+		var size = existingSize / 2;
+		var remainder = existingSize % 2;
+		size = size + remainder;
+		var current_size = 0;
+		list.children().each(function () {
+			if (++current_size> size) {
+				var new_list = $j('<ul></ul>').insertAfter(list);
+				new_list.attr('class', list.attr('class'));
+				list.addClass('splitListLeft');
+				new_list.addClass('splitListRight');
+				list = new_list;
+				current_size = 1;
+			}
+			list.append(this);
+		});
+	});
+
+	/* LIGHTBOX FUNCTIONALITY */
+	if($j('a[rel~=lightbox]').length){
+		$j('a[rel~=lightbox]').each(function() {
+			var myLinkHolder, myLinkHref;
+			myLinkHolder = $j(this);
+			myLinkHref = myLinkHolder.attr('href');
+			if((myLinkHref.indexOf('youtube.com') !== -1) || (myLinkHref.indexOf('vimeo.com') !== -1) || (myLinkHref.indexOf('brightcove.com') !== -1)) {
+				myLinkHolder.attr('rel','lightbox videoLightbox');
+			} else if (myLinkHolder.parent().is('div.cmeLightboxGallery ul li')) {
+				myLinkHolder.attr('rel','lightbox galleryLightbox');
+			} else if (myLinkHref.indexOf('#') !== -1) {
+				myLinkHolder.attr('rel','lightbox inlineLightbox');
+			} else if(myLinkHref.lastIndexOf('.html') === myLinkHref.length - '.html'.length) {
+				myLinkHolder.attr('rel','popup');
+			} else {
+				myLinkHolder.attr('rel','lightbox imageLightbox').attr('target', "_blank");
+			}
+		}).promise().done(function(){
+			if(!$j('body').hasClass('cq-wcm-edit')){ //IF WE AREN'T IN AUTHOR MODE, APPLY THE LIGHTBOX
+				$j('a[rel~=imageLightbox]').magnificPopup({
+					closeOnContentClick: true,
+					disableOn: 800,
+					preloader: true,
+					midClick: true,
+					mainClass: 'mfp-fade',
+					removalDelay: 300,
+					type: 'image'
+				});
+				$j('a[rel~=videoLightbox]').magnificPopup({
+					disableOn: function() {
+						if($j('#cmePageNavigation').css('position') === 'absolute') {
+							return false;
+						} else {
+							return true;
+						}
+					},
+					type: 'iframe',
+					mainClass: 'mfp-fade',
+					removalDelay: 300,
+					preloader: false,
+					fixedContentPos: false
+				});
+				$j('.cmeLightboxGallery').each(function() {
+					$j(this).magnificPopup({
+						type:'image',
+						delegate: 'a',
+						mainClass: 'mfp-fade',
+						removalDelay: 300,
+						tLoading: 'Loading image #%curr%...',
+						gallery:{
+							enabled:true,
+							preload: [0,1]
+						}
+					});
+				});
+				$j('a[rel~=inlineLightbox]').magnificPopup({
+					type: 'inline',
+					fixedContentPos: false,
+					fixedBgPos: true,
+					overflowY: 'auto',
+					closeBtnInside: true,
+					preloader: false,
+					midClick: true,
+					removalDelay: 300,
+					mainClass: 'my-mfp-zoom-in'
+				});
+			}
+			/*$j('a[rel~=ajaxLightbox]').magnificPopup({
+				closeOnContentClick: true,
+				preloader: true,
+				midClick: true,
+				mainClass: 'mfp-fade',
+				removalDelay: 300,
+				type: 'ajax',
+				ajax: {
+					settings: null,
+					cursor: 'mfp-ajax-cur',
+					tError: '<a href="%url%">The content</a> could not be loaded.'
+				}
+			});*/
+		});
+	}
+
+	/**************************************/
+	/* LOADS FEEDS IN NAVIGATION FLY-OUTS */
+	/**************************************/
+	if ($j('#cmePageNavigation').length) {
+		$j(document).on('mouseenter touchstart','.cmeNavigationItem', function(e) {
+			var myNavItem = $j(this);
+			var myNavItemID = myNavItem.attr('id');
+
+			if (myNavItem.attr('data-populated')!=='true' ){
+
+				//if (typeof (google) !== 'undefined') {
+					switch (myNavItemID){
+						case "navigationProducts":
+							//Market Commentary - Products & Training
+							//getNavRSSFeed('http://feeds.feedburner.com/CMEGroup/AoxE','stories',5,'megaMenuProductsStories','megaMenuStoryItem',false,true,'li',true,'','');
+							break;
+						case "navigationEducation":
+							//Featured Reports - Education
+							getNavRSSFeed('http://feeds.feedburner.com/FeaturedReports','stories',3,'megaMenuEducationStories','megaMenuStoryItem',true,true,'li',true,'','');
+							//Video - Education
+							/*getNavRSSFeed('http://'+location.hostname+'/rss/Video.rss','videos',1,'LatestVideo','latestVideo','',false,'div',true'','');*/
+							break;
+						case "navigationAbout":
+							//News - About Us
+							getNavRSSFeed('http://feeds.feedburner.com/mediaroom/CMsF','stories',1,'megaMenuAboutUsNewsStories','megaMenuStoryItem',false,true,'li',true,'','');
+							//Open Markets - About Us
+							getNavRSSFeed('http://openmarkets.cmegroup.com/feed/','stories',1,'megaMenuAboutUsOpenMarketsStories','megaMenuStoryItem',false,true,'li',true,'','');
+							//Jobs - About Us
+							getNavRSSFeed('http://feeds.feedburner.com/CmeGroupJobFeed','jobs',3,'megaMenuAboutUsJobsStories','subSectionLink','',false,'li',false,'','external');
+							break;
+						case "navigationMarketReg":
+							//Latest Advisories - Market Regulations
+							getNavXMLFeed('http://'+location.host+'/content/cmegroup/en/rss/MRANs.xml',4,true,300,'megaMenuMarketRegulationStories','advisoriesDiv','advisoriesContentDiv','');
+							break;
+						case "navigationClearing":
+							//Advisories - Clearing
+							getNavXMLFeed('http://'+location.host+'/content/cmegroup/en/rss/ClearingAdvisories.xml',2,true,300,'megaMenuClearingStories','advisoriesDiv','advisoriesContentDiv','');
+							break;
+					}
+					myNavItem.attr('data-populated', 'true');
+				//}
+
+			}
+		});
+	}
+	/* END OF NAVIGATION FEEDS */
+
+	/**************************************/
+	/* HANDLE TABLE DISPLAY */
+	/**************************************/
+	/* CMETABLE, CMESPECTABLE AND CMETABLESECONDARY */
+	$j('.cmeTable,.cmeSpecTable,.cmeTableSecondary', '#cmePageContentArea').each(function() {
+		var myTable = $j(this);
+		if(($j.fn.cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+			if (myTable.hasClass('cmeTable')){
+				if (myTable.hasClass('cmeTableWidget')){
+					//myTable.cmeTables({
+					//	addDefaultResponsiveHandling: true,
+					//	addStriping : allowJsStriping,
+					//	addRowHighlight : true,
+					//	addFixedHeader : true,
+					//	addSorting: false
+					//});
+				}								
+				if (myTable.hasClass('cmeTableSorting')){
+					myTable.cmeTables({
+						addStriping : allowJsStriping,
+						addRowHighlight : true,
+						addFixedHeader : true,
+						addSorting: true
+					});
+				} else {
+					myTable.cmeTables({
+						addStriping : allowJsStriping,
+						addRowHighlight : true,
+						addFixedHeader : true,
+						addSorting: false
+					});
+				}
+			} else if (myTable.hasClass('cmeSpecTable')){
+					myTable.cmeTables({
+						addDefaultResponsiveHandling: true,
+						addStriping : allowJsStriping,
+						addRowHighlight : false
+				});
+			} else if (myTable.hasClass('cmeTableSecondary')){
+					myTable.cmeTables({
+						addDefaultResponsiveHandling: true,
+						addStriping : allowJsStriping,
+						addRowHighlight : true
+				});
+			} else {
+				myTable.cmeTables({
+					//addDefaultResponsiveHandling: true
+				});
+			}
+		}
+	});
+	
+	/* CMECONTENT AND CMEDATATABLES */
+	$j('.cmeContentTable, .cmeDataTable', '#cmePageContentArea').each(function(){
+		var myTable = $j(this);
+		if(!$j('body').hasClass('cq-wcm-edit')){
+			myTable.addDefaultResponsiveHandling();
+			var myLastTableRow = $j('tr:last',myTable);
+			var myFirstTableCellLastRow = $j('th:first, td:first', myLastTableRow);			
+			if (allowJsStriping === true){
+				if (!myFirstTableCellLastRow.hasClass('cmeRowHeading')){
+					var myRowStriping = 'cmeRowBandingOn';
+					var myCurrentRowCounter = 0;
+					var myRowspanThreshold = 1;
+					
+					$j('tr', myTable).each(function(){
+						var myTableRow = $j(this);
+						var myFirstCell = $j('th:first, td:first', myTableRow);
+						
+						if(myFirstCell.hasAttr('rowspan')){
+							myRowspanThreshold = parseInt(myFirstCell.attr('rowspan'));
+						}
+						
+						if((myCurrentRowCounter < myRowspanThreshold) && (myRowspanThreshold > 1)){
+							if(myCurrentRowCounter === 0){
+								myRowStriping = (myRowStriping === "cmeRowBandingOff") ? "cmeRowBandingOn" : "cmeRowBandingOff";
+							}
+							if((myCurrentRowCounter === myRowspanThreshold-1) && (myRowspanThreshold > 1)){
+								myCurrentRowCounter = 0;		
+								myRowspanThreshold = 1;	
+							} else {
+								myCurrentRowCounter = myCurrentRowCounter +1;
+							}
+							myTableRow.addClass(myRowStriping);
+							
+							
+						} else {
+							myRowStriping = (myRowStriping === "cmeRowBandingOff") ? "cmeRowBandingOn" : "cmeRowBandingOff";
+							myTableRow.addClass(myRowStriping);		
+							myCurrentRowCounter = 0;		
+							myRowspanThreshold = 1;				
+						}
+					});
+				}
+			}
+			
+			
+		}
+	});
+
+	/****************************************/
+	/* HANDLE DATA WIDGETS DISPLAY */
+	/****************************************/
+	if (allowJsStriping === true){
+		if ($j("div.cmeDataWidget").length) {
+			$j("div.cmeDataWidget").each(function() {	// loop through all data widgets, add row striping
+				$j(this).find("table > tbody > tr:even").addClass("cmeRowBandingOff");
+				$j(this).find("table > tbody > tr:odd").addClass("cmeRowBandingOn");
+			});
+		}
+	}
+	/* END DATA WIDGETS DISPLAY */
+
+	$j.fn.activateAutoUpdateIcon = function() {
+		if ($j('.cmeUpdateControl').length){
+			var myUpdateControl = $j(this).closest('.cmeUpdateControl');
+			if (($j('html').hasClass('msie-8')) || $j('html').hasClass('msie-7')){
+				$j('span.cmeUpdateLabel',myUpdateControl).text('Auto Refresh is on');
+			}
+			$j('#cmeAutoUpdateSwitch').prop('checked', true);
+		}
+		$j.fn.startAutoUpdate();
+	};
+
+	$j.fn.startAutoUpdate = function(schedule) {
+		if (window.cmeComponents) {
+			$j.each(window.cmeComponents, function(index, value) {
+				if (!value.handlerObj || !value.handlerObj.autoUpdate || !value.visible) return;
+				var comp = value.handlerObj;
+				var immediateRefesh = (comp.immediateRefresh !== undefined) ? comp.immediateRefresh : false;
+				
+				if (comp.ttl != undefined) {
+					comp.currentTtlLeft = comp.ttl;
+				}
+
+				var scheduleFunction = function() {
+					
+					var timeout = 20000;
+					
+					if (comp.autoUpdateTimeout) {
+						timeout = comp.autoUpdateTimeout;
+					}
+
+					if (comp.autoUpdateTimer) {
+						nullTimer(comp.autoUpdateTimer);
+						comp.autoUpdateTimer = undefined;
+					}
+
+					comp.autoUpdateTimer = setTimeout(autoUpdateFunction, timeout);
+				};
+
+				var autoUpdateFunction =  function() {
+					var reschedule = true;
+					if (!comp.visible) {
+						return false;	// don't fire if invisible
+					}
+					if (comp.currentTtlLeft != undefined) {
+						comp.currentTtlLeft = (comp.currentTtlLeft > 0) ? comp.currentTtlLeft - 1 : 0;
+						reschedule = comp.currentTtlLeft > 0;
+					}
+					if (reschedule) {
+						scheduleFunction();
+					} else {
+						if (comp.beforeShutdownAutoUpdate) {
+							comp.beforeShutdownAutoUpdate();
+						}
+						if ($j('.cmeUpdateControl').length) {
+							var myUpdateControl = $j(this).closest('.cmeUpdateControl');
+							if (($j('html').hasClass('msie-8')) || $j('html').hasClass('msie-7')) {
+								$j('span.cmeUpdateLabel',myUpdateControl).text('Auto Refresh is off');
+							}
+							$j('#cmeAutoUpdateSwitch').prop('checked', false);
+						}
+					}
+					comp.autoUpdate();
+				};
+				
+				if (schedule) {
+					scheduleFunction();
+				} else {
+					if (immediateRefesh) {
+						$j.fn.startAutoUpdate(true);
+					} else {
+						if(comp.beforeStartAutoUpdate) {
+							comp.beforeStartAutoUpdate();
+						}
+						autoUpdateFunction();	
+					}
+				}
+				
+			});
+		}
+	};
+
+	$j.fn.toggleAutoUpdateIcon = function(){
+			if ($j(this).prop('checked')) {
+				$j(this).activateAutoUpdateIcon();
+			} else {
+				if ($j('.cmeUpdateControl').length){
+					var myUpdateControl = $j(this).closest('.cmeUpdateControl');
+					if (($j('html').hasClass('msie-8')) || $j('html').hasClass('msie-7')){
+						$j('span.cmeUpdateLabel',myUpdateControl).text('Auto Refresh is off');
+					}
+					$j(this).prop('checked', false);
+				}
+				$j.fn.shutdownAutoUpdate();
+			}
+	};
+
+	$j.fn.toggleAutoUpdateIconTouch = function() {
+		if (!$j(this).prop('checked')) {
+				$j(this).activateAutoUpdateIcon();
+			} else {
+				if ($j('.cmeUpdateControl').length){
+					var myUpdateControl = $j(this).closest('.cmeUpdateControl');
+					if (($j('html').hasClass('msie-8')) || $j('html').hasClass('msie-7')){
+						$j('span.cmeUpdateLabel',myUpdateControl).text('Auto Refresh is off');
+					}
+					$j(this).prop('checked', false);
+				}
+				$j.fn.shutdownAutoUpdate();
+			}
+	};
+
+	$j.fn.shutdownAutoUpdate = function() {
+		if (window.cmeComponents) {
+			for(var i = 0; i < window.cmeComponents.length; i++) {
+				var comp = window.cmeComponents[i];
+				if (comp.handlerObj.autoUpdateTimer) {
+					if(comp.handlerObj.beforeShutdownAutoUpdate) {
+						comp.handlerObj.beforeShutdownAutoUpdate();
+					}
+					nullTimer(comp.handlerObj.autoUpdateTimer);
+				}
+			}
+		}
+	};
+
+	/*$j('body').on(cmeEvent, '.cmeAutoUpdateIcon', function(e) {
+		if((cmeEvent.indexOf('touchstart') !== -1) && (e.type === 'touchstart')){
+			$j(this).toggleAutoUpdateIconTouch();
+		} else if((cmeEvent.indexOf('touchstart') === -1) && (e.type === 'click')) {
+			$j(this).toggleAutoUpdateIcon();
+		}
+	});*/
+
+
+
+	$j('#cmePageWrapper').on('click', '.cmeSliderSwitch', function(e) {
+    	e.preventDefault();
+		e.stopPropagation();
+	}).on('tap', '.cmeSliderSwitch', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$j('#cmeAutoUpdateSwitch').toggleAutoUpdateIconTouch();
+	});
+
+	var updateCMEEnvironment = function() {
+		if ((typeof cmeVal.MqDisplayDescriptions() !== 'undefined') && (cmeVal.WindowResizeTimer() !== 'undefined')){
+			clearTimeout(cmeVal.WindowResizeTimer());
+			cmeVal.setWindowResizeTimer(
+				setTimeout(function(){
+					evaluateMQMatches(cmeVal.MqDisplayDescriptions(),true);
+				}, 1000)
+			)
+		}
+	
+		if (isResponsiveMode() && (!$j('html').hasClass('cmeResponsive'))){
+			$j('html').addClass('cmeResponsive');
+			if (cmePageFilters["pageNumber"] !== undefined) { cmePageFiltersAdd({"pageNumber":1}); }	// return to first page
+			responsifyAll();
+		} else if (($j('html').hasClass('cmeResponsive')) && !isResponsiveMode()) {
+			$j('html').removeClass('cmeResponsive');
+			$j('body').removeClass('cmeModalDisplay').removeAttr('style');
+			if (cmePageFilters["pageNumber"] !== undefined) { cmePageFiltersAdd({"pageNumber":1}); }	// return to first page
+			unresponsifyAll();
+		}
+		if ($j('.cmeSelectFieldWrapper').length){
+			$j('.cmeSelectFieldWrapper').each(function(){
+				$j(this).handleStyledDropdown();
+			});
+		}		
+	};
+
+	var setCMEEnvironment = function() {
+		if ($j('.cmeUpdateControl').length){
+			$j('#cmeAutoUpdateSwitch').prop('checked', true);
+			if (($j('html').hasClass('msie-8')) || $j('html').hasClass('msie-7')){
+				$j('span.cmeUpdateLabel','.cmeUpdateControl').text('Auto Refresh is on');
+			}
+		}
+
+		if(isResponsiveMode()){
+			$j('html').addClass('cmeResponsive');
+			responsifyAll();
+			$j.fn.startAutoUpdate(true);
+			if ($j('.cmeSelectFieldWrapper').length){
+				$j('.cmeSelectFieldWrapper').each(function(){
+					$j(this).handleStyledDropdown();
+				});
+			}
+		} else  {
+			$j.fn.startAutoUpdate(true);
+		}
+	};
+
+	/* CONFIGURING GLOBAL AJAX SETUP */
+	$j(document).ajaxStart(function(){
+		$j('.cmeAsyncComponent').each(function(){
+			addProgressAlert($j(this));
+		});
+	});
+
+	$j(document).ajaxComplete(function(){
+		$j('.cmeAsyncComponent').each(function(){
+			removeProgressAlert($j(this));
+		});
+	});
+
+	/* NB - CONTROLLING THE ENVIRONMENT */
+	$j(window).on('load', setCMEEnvironment);
+	$j(window).on('resize', updateCMEEnvironment);	
+
+	function responsifyAll() {
+		if($j('.cmeDynamicTabs').length){
+			$j('.cmeDynamicTabs').each(function(){
+				$j(this).loadMobileTabs();
+			});
+		}
+
+		$j('> .cmeTabsNavigation', '.cmeTabs').each(function(){
+			$j(this).prettifyJumpMenu();
+		});
+
+		if((jQuery().cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+			$j('table.cmeTable').each(function() {
+				$j(this).addFixedHeader(false);
+			});
+		}
+		
+		if($j('.cmeInteractiveTable').length){
+			$j('.cmeInteractiveTable').each(function(){
+				changeInteractiveTablePageLength($j(this));
+			});
+		}
+
+		updateMobileMenuLink();
+
+		if (window.cmeComponents) {
+			$j.each(window.cmeComponents, function(index, value) {
+				if (value.handlerObj && value.handlerObj.responsify && value.visible) {
+					value.handlerObj.responsify();
+				}
+			});
+		}
+	}
+	function unresponsifyAll() {
+		if($j('.cmeDynamicTabs').length){
+			$j('.cmeDynamicTabs').each(function(){
+				$j(this).unloadMobileTabs();
+			});
+		}
+
+		$j('.cmeTabsNavigation', '.cmeTabs > .cmeSelectFieldWrapper').each(function(){
+			$j(this).rewindJumpMenu();
+		});
+
+		if((jQuery().cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+			$j('table.cmeTable').each(function() {
+				$j(this).addFixedHeader(true);
+			});
+		}
+		
+		if($j('.cmeInteractiveTable').length){
+			$j('.cmeInteractiveTable').each(function(){
+				changeInteractiveTablePageLength($j(this));
+			});
+		}
+
+		if ($j('li.cmeFlipSwitchWrapper').length){
+			setFlipMechanism();
+			handleFlipSwitch();
+		}
+
+		updateMobileMenuLink();
+
+		if (window.cmeComponents) {
+			$j.each(window.cmeComponents, function(index, value) {
+				if (value.handlerObj && value.handlerObj.unresponsify && value.visible) {
+					value.handlerObj.unresponsify();
+				}
+			});
+		}
+	}
+
+
+    /* CONVERT ULS TO DROPDOWN LISTS */
+	$j.fn.prettifyJumpMenu = function(){
+		var myPageURL = window.location.pathname.replace(/^.*[\\\/]/, '');
+		var isSelected = "";
+		var myListWrapper, myDropDownList, myDropdownLabelListWrapper, myDropdownLabelList, myListLabelCategory, myListLabelState, myListLabelStatus;
+		var $jListParent = $j(this).parent();
+		$j(this).wrap('<div class="cmeSelectFieldWrapper cmeMobileJumpMenu"></div>');
+		myListWrapper = $j(this).closest('.cmeMobileJumpMenu');
+		$jListParent.prepend(myListWrapper);
+		myListWrapper.append('<select class="cmeJumpMenu"></select>');
+		myDropDownList = myListWrapper.children('select');
+		myDropDownList.attr('class', $j(this).attr('class')).addClass('cmeJumpMenu').addClass('cmeSelect');
+		$j('> li', $j(this)).each(function() {
+			if ($j(this).has('ul').length) {
+				$j('> ul > li', $j(this)).each(function() {
+					if ($j(this).hasClass("cmeLabelWrapper")){
+						myListLabelCategory = $j(this).children('span').eq(0).text();
+						myListLabelState = $j(this).children('span').eq(1).text();
+						//myListLabelStatus = $j(this).children('span').eq(1).attr('class');
+					} else {
+						$j('a', $j(this)).each(function() {
+							var toshow;
+							if (myListLabelCategory) {
+								toshow = myListLabelCategory + ' ' + $j(this).text();
+							}
+							else {
+								toshow = $j(this).text();
+							}
+							if (($j(this).attr('href') === myPageURL) || ($j(this).closest('li').hasClass('cmeTabSelected'))) {
+								myDropDownList.append('<option value="' + $j(this).attr('href') + '" selected="selected" rel="' + $j(this).attr('rel') + '"  data-category="' + myListLabelCategory + '" data-type="' + $j(this).parent().attr('class').replace('cmeTabSelected ','') + '" data-state="' + myListLabelState + '">' + toshow + '<\/option>');
+							}
+							else {
+								myDropDownList.append('<option value="' + $j(this).attr('href') + '" rel="' + $j(this).attr('rel') + '"  data-category="' + myListLabelCategory + '" data-type="' + $j(this).parent().attr('class').replace('cmeTabSelected ','') + '" data-state="' + myListLabelState + '">' + toshow + '<\/option>');
+							}
+						});
+					}
+				});
+			} else {
+				$j('a', $j(this)).each(function() {
+					if (($j(this).attr('href') === myPageURL) || ($j(this).closest('li').hasClass('cmeTabSelected'))) {
+						myDropDownList.append('<option value="' + $j(this).attr('href') + '" rel="' + $j(this).attr('rel') + '" selected="selected">' + $j(this).text() + '<\/option>');
+					}
+					else {
+						myDropDownList.append('<option value="' + $j(this).attr('href') + '" rel="' + $j(this).attr('rel') + '" >' + $j(this).text() + '<\/option>');
+					}
+				});
+			}
+		});
+		myDropDownList.prepend('<option value="0">Please select..</option>');
+		$j(this).attr('rel', $jListParent.attr('rel'));
+		$j(this).remove();
+    };
+
+    /* REVERT DROPDOWN LISTS TO ULS */
+    $j.fn.rewindJumpMenu = function(){
+		var myPageURL = window.location.pathname.replace(/^.*[\\\/]/, '');
+		var myListWrapper, myList, myListString;
+		var mySubList = "", mySubListCategory = "", mySubListState, mySubListStatus, mySubListType;
+		var myDropdownList, myDropDownWrapper;
+		var isSubList = false, myListCounter = 0;
+		var isNewSubList = false;
+		myDropdownList = $j(this);
+		myDropDownWrapper = $j(this).closest('.cmeMobileJumpMenu');
+		myDropDownWrapper.append('<ul class="cmeTempTabsSystem"></ul>');
+		myListWrapper = myDropDownWrapper.children('.cmeTempTabsSystem');
+		myListWrapper.attr('class', myDropdownList.attr('class'));
+		$j(myDropdownList).children('option').eq(0).remove();
+		$j('option', myDropdownList).each(function(){
+			if ($j(this).attr('data-category')) {
+				if (mySubListCategory !== $j(this).attr('data-category')) {
+					isNewSubList = true;
+					if ((myListCounter !== 0) && (mySubList !== "")) {
+						myListString = '<li class="cmeTabsSubNavigationItem"><ul>' + mySubList + '</ul></li>';
+						myListWrapper.append(myListString);
+						mySubList = "";
+						myListString = "";
+					}
+					mySubListCategory = $j(this).attr('data-category');
+					mySubListState = $j(this).attr('data-state');
+					if ((typeof mySubListCategory !== 'undefined') && (mySubListCategory !== 'undefined')) {
+						mySubList = '<li class="cmeLabelWrapper"><span>' + mySubListCategory + '</span></li>';
+					}
+				}
+				mySubList += '<li class="';
+				if ($j(this).attr('selected') === 'selected') {
+					mySubList += 'cmeTabSelected';
+				}
+				mySubListType = $j(this).attr('data-type');
+				mySubList += ' ' + mySubListType;
+				mySubList += '"';
+				mySubList += '><a href="' + $j(this).val() + '"><span>'+$j(this).text().replace(mySubListCategory,"").trim() +'</span></a></li>';
+			} else {
+				myListString = '<li';
+				if ($j(this).attr('selected') === 'selected') {
+					myListString += ' class="cmeTabSelected"';
+				}
+				myListString += '><a href="' + $j(this).val() + '" rel="' + $j(this).attr('rel') + '">'+$j(this).text()+'</a></li>';
+				myListWrapper.append(myListString);
+			}
+			myListCounter = myListCounter + 1;
+		});
+
+		if ((myListCounter !== 0) && (mySubList !== "")) {
+			myListString = '<li class="cmeTabsSubNavigationItem"><ul>' + mySubList + '</ul></li>';
+			myListWrapper.append(myListString);
+			mySubList = "";
+			myListString = "";
+		}
+		myListWrapper.removeClass('cmeTempTabsSystem').removeClass('cmeJumpMenu').removeClass('cmeSelect');
+		$j(myDropdownList).remove();
+		$j(myListWrapper).unwrap();
+		$j('.cmeTabsSubNavigationItem', myListWrapper).each(function(){
+			$j('li.cmeFlipSwitchItem', this).wrapAll('<li class="cmeFlipSwitchWrapper"><ul class="cmeFlipSwitch"></ul></li>');
+		});
+	};
+
+	$j.fn.getTableDataByAJAX2 = function (myURL, myDataType, targets, extraData, isMobile, postProcessor, dataPropName, pageSize) {
+		//var myWrapperObject = $j(targets[0].tableId).closest('div.cmeTableBlockWrapper');
+		var myWrapperObject = $j(targets[0].tableId).parent();
+		var timeout = null;
+		var delayBy = 200;
+		if (myURL) {
+			var myRequestId = "ajax-" + targets[0].tableId.replace("#",""); // generate id for request
+			
+			if (myURL.indexOf("pageSize=") === -1) {
+				if (pageSize !== undefined && pageSize != null) {
+					cmePageFiltersAdd({ "pageSize": pageSize });
+				} else {
+					cmePageFiltersAdd({ "pageSize": isMobile ? 50 : 500 });	// set pagination size if not exists
+				}
+			}
+			
+			var myPageFilters = cmePageFiltersGet();
+			
+			if ($j('html').hasClass('cme-pagination')){
+				if ((myURL.indexOf("pageNumber=") === -1) && (myPageFilters.indexOf("pageNumber=") === -1)) {
+					cmePageFiltersAdd({ "pageNumber": 1 });	// set page number if it does not exist
+				}
+			}
+			
+						
+			myURL = cmePageFiltersBuildUrl(myURL); // update URL with filters (if available)
+			if ($j(targets[0].tableId).hasClass("cmeTableAutoUpdate")) {
+				if (window[myRequestId] !== undefined) { window[myRequestId].abort(); } // abort existing requests
+			}
+			
+			cmeVal.setGlobalRequest(
+				$j.ajax({
+					url: myURL,
+					global: false,
+					dataType: myDataType,
+					extraData: extraData,
+					beforeSend: function(){
+
+						//myWrapperObject.append('<div class="cmeProgressPanel">Processing...</div>').show("slow").fadeIn(10000);
+
+
+						addProgressAlert(myWrapperObject);
+					},
+					success: function(data) {
+						$j.fn.getTableData(data, targets, extraData, isMobile, postProcessor, dataPropName);
+						if (data !== null) {
+							if (data["props"] !== undefined) {
+								$j.fn.redrawTablePagination(targets[0].tableId, data["props"].pageTotal, data["props"].pageNumber, pageSize); // redraw pagination
+								if (data["props"].noOfResults !== undefined && $j('.cmeResults').length) { $j('.cmeResults').html(data["props"].noOfResults); } // update total results
+							}
+						}
+						
+						cmePageFiltersUpdate(false); // update window hash with filters
+					},
+					error: function(xhr, textStatus, errorThrown) {
+						if (textStatus !== "abort") {	// don't display error message for aborts
+							$j('.cmeProgressPanel').html('<p>An error has occurred: ' + textStatus + '</p>');
+						}
+						for (var i = 0; i < targets.length; i++) {
+							var thisTable = targets[i];
+							if (!(textStatus === "abort" && $j(thisTable.tableId).hasClass("cmeTableAutoUpdate"))) {	// don't display table error for aborts on slate
+								updateTableWithError(thisTable);
+							}
+						}
+					},
+					complete: function() {
+						if (window[myRequestId] !== undefined) {
+							if (window[myRequestId].readyState === 4) {
+								// IF THE REQUEST IS COMPLETE HIDE THE PROGRESS PANEL
+								/*$j('.cmeProgressPanel').hide('slow').fadeOut(10000, function() {
+									$j('.cmeProgressPanel').remove();
+								});*/
+								//clearTimeout(timeout);
+								removeProgressAlert(myWrapperObject);
+
+								$j('.cmeDynamicForm .cmeButton:not(.cmeDynamicShow)').css({ 'display':'none' });
+							}
+						}
+					},
+					cache: false
+				})
+			);
+			window[myRequestId] = cmeVal.GlobalRequest();	// hold request in window object
+		} else {
+			$j.fn.getTableData({}, targets, extraData, isMobile, postProcessor, dataPropName);
+		}
+	};
+
+	$j.fn.getTableData = function (data, targets, extraData, isMobile, postProcessor, dataPropName) {
+		var context = {};
+		if (!dataPropName) {
+			context["quotes"] = data;
+		} else {
+			context[dataPropName] = data;
+		}
+		if (extraData) {
+			for(var prop in extraData) {
+				if (!context[prop]) {
+					context[prop] = extraData[prop];
+				}
+			}
+		}
+		if (postProcessor) {
+			postProcessor(context);
+		}
+		for (var i = 0; i < targets.length; i++) {
+			var target = targets[i];
+			if (target.hasNoData  && target.hasNoData(context)) {
+				updateTableWithMustache(target, context, isMobile, updateTableWithNoData);
+			} else {
+				updateTableWithMustache(target, context, isMobile);
+			}
+		}
+	};
+
+	$j.fn.redrawTablePagination = function (tableId, pageTotal, pageNumber, pageSize) {
+		if (window.cmeComponents) {
+			$j.each(window.cmeComponents, function(index, value) {	// loop through components
+				if (value.type === "list" || value.pagination === true) { // check it is a list component
+					var component = cmeComponents[index]; // get component
+					var handler = component.handlerObj;
+					handler.pageTotal = pageTotal;	// set new params
+					handler.pageNumber = pageNumber;
+					handler.drawPagination(tableId, pageTotal, pageNumber, pageSize); // draw pagination
+					//alert('tableId='+tableId+',pageTotal='+pageTotal+',pageNumber='+pageNumber);
+				}
+			});
+		}
+	};
+	/************************/
+	/* END OF TABLE DISPLAY */
+	/************************/
+
+
+	$j('.cmeMarketingMessage').each(function() {
+		var myMessagingComponent = $j(this);
+		if(getCookie(myMessagingComponent.attr('id')) === undefined || getCookie(myMessagingComponent.attr('id')) === null || myMessagingComponent.hasClass('cmeEditMode')) {
+			myMessagingComponent.closest('.cmeMarketingMessageContainer').slideDown('slow');
+			myMessagingComponent.append('<div><a class="cmeButton cmeButtonSecondary cmeCloseButton cmeMarketingMessageButton" href="#"><span>Hide this message</span></a></div>');
+		} else {
+			myMessagingComponent.closest('.cmeMarketingMessageContainer').remove();
+		}
+	});
+
+
+	if ($j('.cmeCloseButton.cmeMarketingMessageButton').length) {
+		$j('#cmePageWrapper').on('click', '.cmeCloseButton.cmeMarketingMessageButton', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}).on('tap', '.cmeCloseButton.cmeMarketingMessageButton', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var myMessagingComponent = $j(this);
+			setCookie(myMessagingComponent.closest('.cmeMarketingMessage').attr('id'),"true","",14);
+			myMessagingComponent.closest('.cmeMarketingMessageContainer').slideUp('slow', function() { $j(this).remove(); });
+		});
+	}
+});
+
+function getTopOffset() {
+    var $pineappleHeader = $j('.cmePineappleHeader'),
+        $legendaryNav = $j('.cmeLegendaryNav');
+    
+    var offsetTop = $pineappleHeader.length
+        ? $legendaryNav.length
+            ? $pineappleHeader.height() + $legendaryNav.height()
+            : $pineappleHeader.height()
+        : 0;
+    
+    return offsetTop;
+}
+
+(function($j) {
+    $j(function() {
+        $j('a')
+            .filter(function(index, el) {
+                return el.hash.length > 1
+                    && !el.hash.match(/[=]/ig)
+                    && !el.rel
+                    && !$j(el).parents('.cmeTabsNavigation').length;
+            })
+            .filter(function(index, el) {
+                return $j('a[name="'+el.hash.slice(1)+'"]').length;
+            })
+            .on('click', function(event) {
+                event.preventDefault();
+                window.location.hash = this.hash;
+                $j(window).scrollTop($j('a[name="'+this.hash.slice(1)+'"]').offset().top - getTopOffset());
+            });
+    });
+})(jQuery);
+
+function updateTableWithMustache(target, data, isMobile, executeAfter) {
+	var allowJsStriping = false;
+	if ($j('html').hasClass('cme-nth-selector')) { 
+		allowJsStriping = false;
+	} else {
+		allowJsStriping = true;
+	}
+	var thisTable = $j(target.tableId);
+	var $jmyWrapperObject = thisTable.closest('div.cmeTableBlockWrapper');
+	var $jtableWrapperContainer;
+	var templater = function(template, status, jqXHR) {
+		templater.myWrapperObject.html(Mustache.to_html(template, this.success.data));
+		if ($j($jmyWrapperObject).find("div.cmeDataWidget").length) {
+			if (allowJsStriping === true){
+				$j($jmyWrapperObject).find("div.cmeDataWidget").each(function() {	// loop through all data widgets, add row striping
+					$j(this).find("table > tbody > tr:even").addClass("cmeRowBandingOff");
+					$j(this).find("table > tbody > tr:odd").addClass("cmeRowBandingOn");
+				});
+			}
+		}
+		if (isMobile === true) {
+					pinnedTableWrapperWidth = 0;
+					pinnedTableWrapperOuterWidth = 0;
+					if ($jmyWrapperObject.children('div.cmeTableBlockWrapperRepeater').length > 0 ) {
+						$jtableWrapperContainer = $j('div.cmeTableBlockWrapperRepeater', $jmyWrapperObject);
+					} else {
+						$jtableWrapperContainer = $jmyWrapperObject;
+					}
+
+					$jtableWrapperContainer.each(function() {
+						if ($j(this).find('div.cmeTableResponsivePinnedWrapper').length !== 0) {
+							myPinnedTableWrapper = $j('div.cmeTableResponsivePinnedWrapper', this);
+							myResponsiveTableWrapper = $j('div.cmeTableResponsiveScrollableWrapper', this);
+							myPinnedTable = $j('table.cmePinnedTable', myPinnedTableWrapper);
+							myResponsiveTable = $j('table.cmeTable', myResponsiveTableWrapper);
+
+							var position = myResponsiveTableWrapper.position();
+							myPinnedTableWrapper.css({ 'top': position.top });
+
+							/* Fix Pinned Table Cell Widths and Heights */
+							var myRowHeight = 0,  myInnerRowHeight = 0, myCellWidth = 0, myCellInnerWidth = 0;
+
+							/* DETERMINING CELL WIDTHS */
+							var myResponsiveHeaderTH = $j('thead tr:first-child th.cmeFixedColumn', myResponsiveTable);
+							var myHeight = myResponsiveHeaderTH.innerHeight();
+							if ($j('html').hasClass('opera')) { myHeight = myHeight + parseInt(myResponsiveHeaderTH.css('border-top-width'),10) + parseInt(myResponsiveHeaderTH.css('border-bottom-width'),10); }
+							var myWidth = myResponsiveHeaderTH.innerWidth();
+							var myHeaderTHMaxWidth = parseInt(myResponsiveHeaderTH.css('max-width'),10);
+							var myHeaderTHMinWidth = parseInt(myResponsiveHeaderTH.css('min-width'),10);
+							var myCellPadding = parseInt(myResponsiveHeaderTH.css('padding-left'),10) + parseInt(myResponsiveHeaderTH.css('padding-right'),10);
+
+							myWidth = (myWidth < myHeaderTHMaxWidth) ? myWidth : myHeaderTHMaxWidth;
+							myWidth = (myHeaderTHMinWidth < myWidth) ? myWidth : myHeaderTHMinWidth;
+
+							/* SETTING DIMENSIONS FOR PINNED TABLE WRAPPER AND FIRST TH IN THEAD IN THAT TABLE */
+							myPinnedTableWrapper.css({ 'width' : myWidth+myCellPadding+1 });
+							$j('thead th.cmeFixedColumn', myPinnedTable).css({ 'height': myHeight, 'min-width': myWidth /*, 'width': myWidth*/ });
+
+							/* SETTING DIMENSIONS FOR FIRST TH IN THEAD IN RESPONSIVE TABLE */
+							myResponsiveHeaderTH.css({ 'height': myHeight, 'width': myWidth, 'min-width': myWidth  });
+
+							/* LOOP THROUGH TBODY CELLS AND SET HEIGHTS ACROSS RESPONSIVE AND PINNED TABLES */
+							var myRows = $j('tbody tr', myResponsiveTable);
+							myRows.each(function(index) {
+								var thisFixedCell = $j('th.cmeFixedColumn', this);
+								myRowHeight = thisFixedCell.height();
+								myInnerRowHeight = thisFixedCell.innerHeight();
+								if ($j('html').hasClass('opera')) { myInnerRowHeight = myInnerRowHeight + parseInt(thisFixedCell.css('border-top-width'),10) + parseInt(thisFixedCell.css('border-bottom-width'),10); }
+								$j(myPinnedTable).find('tbody tr:eq(' + index +') th').css({ 'height':myInnerRowHeight, 'width': myWidth });
+								thisFixedCell.css({ 'height':myInnerRowHeight, 'width': myWidth });
+							});
+
+							if(($j.fn.cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+								$j('table', this).each(function(){
+									if (allowJsStriping === true){
+										$j(this).addRowStriping();
+									}
+									if ($j(this).hasClass('cmeTableSorting')) {
+										$j(this).addSorting();
+									}
+								});
+							}
+						} else {	// handle non-responsive elements
+							if(($j.fn.cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+								$j(this).find("ul, ol").each(function() {
+									if (allowJsStriping === true){
+										if ($j(this).hasClass("cmeRowStriping")) {
+											$j(this).addRowStriping();
+										}
+									}
+								});
+							}
+						}
+					});
+				} else {
+			try {
+				if ($jmyWrapperObject.children('div.cmeTableBlockWrapperRepeater').length > 0 ) {
+					$jtableWrapperContainer = $j('div.cmeTableBlockWrapperRepeater', $jmyWrapperObject);
+					if(($j.fn.cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+						$j('table.cmeTable', $jtableWrapperContainer).each(function(){
+							if (allowJsStriping === true){
+								$j(this).addRowStriping();
+							}
+							$j(this).addRowHighlight().addFixedHeader(cmeVal.UseFixedTableHeaders());
+						});
+					}
+				} else {
+					if(($j.fn.cmeTables) && (!$j('body').hasClass('cq-wcm-edit'))) {
+						if (allowJsStriping === true){
+							$j(target.tableId).addRowStriping();
+						}
+						$j(target.tableId).addRowHighlight().addFixedHeader(cmeVal.UseFixedTableHeaders());
+						if ($j(target.tableId).hasClass('cmeTableSorting')){
+							$j(target.tableId).addSorting();
+						}
+					}
+				}
+			}
+			catch(err){}
+		}
+		$jmyWrapperObject.find('.cmeAlertMessage').removeClass('hiddenElement');
+		$j('.cmeDynamicForm .cmeButton:not(.cmeDynamicShow)').css({ 'display':'none' });
+		if (executeAfter) { executeAfter(target, data); }
+	};
+	templater.tableId = target.tableId;
+	templater.myWrapperObject = $jmyWrapperObject;
+	templater.data = data;
+	if (isMobile === true) {
+		var mobileTemplate = target.mobileTemplate;
+		if (!mobileTemplate) {
+			mobileTemplate = target.template.replace(".html", ".mobile.html");
+		}
+		$j.ajax({
+			global:false,
+			url: mobileTemplate,
+			success: templater
+		});
+	} else {
+		$j.ajax({
+			global:false,
+			url: target.template,
+			success: templater
+		});
+	}
+}
+
+function updateTableWithError(target) {
+	var thisTable = $j(target.tableId);
+	var myWrapperObject = thisTable.closest('div.cmeTableBlockWrapper');
+	myWrapperObject.html("<div id=\"" +target.tableId.substring(1)  + "\" class=\"cmeBlockLayout cmeComponent cmeDataMessage cmeAlertMessage cmeNonSeriousAlertMessage cmeContentSection cmeContentGroup\"><ul><li>A Technical error has occurred. Please try again in a few minutes.</li></ul></div>");
+
+}
+function updateTableWithNoData(target) {
+	var thisTable = $j(target.tableId);
+	var myWrapperObject = thisTable.closest('div.cmeTableBlockWrapper');
+	var tableId = target.tableId.substring(1);
+	myWrapperObject.append("<div  class=\"cmeBlockLayout cmeComponent cmeDataMessage cmeAlertMessage cmeNonSeriousAlertMessage cmeContentSection cmeContentGroup\">" + "<ul>" + "<li class=\"cmeAlertTitle\">No Data Available:</li>" + (window["noDataMessage"+tableId] ? "<li>" + window["noDataMessage"+tableId] +"</li>" : "") +  "<li>Still have questions? Please <a	href=\"/tools-information/contacts-list.html\">Contact Us</a>!</li>"	+ "</ul>" +	"</div>");
+}
+
+$j.fn.handleStyledDropdown = function(){
+	var myWrapperWidth = $j(this).width();
+	var myWrappedSelect = $j('select', this);
+	if ($j('html').hasClass('cmeResponsive')){
+		myWrappedSelect.css({ 'width': myWrapperWidth + 30, 'padding-right': '60px' });
+	} else {
+		myWrappedSelect.removeAttr('style');
+	}
+};
+
+$j.fn.initResponsiveHandler  = function(value) {
+	if (value.handler) {
+		if (! window[value.handler]) {
+			console.warn("No hander " + value.handler + " defined");
+		}
+
+		if (value.componentId && window.cmeRequestManagers && window.cmeRequestManagers[value.componentId]) {
+			value.cmeRequestManager = window.cmeRequestManagers[value.componentId];
+		}
+
+		var handler = new window[value.handler]();
+
+		var defaultHandlerMethod =
+		{
+			"getSelectedValue" :
+			function (select) {
+				if (!select) {
+					throw ("select undefined");
+				}
+				if (! select.options) {
+					throw ("argument select has no options " + select);
+				}
+ 				if (select.options){
+	 				if (select.value !== " "){
+		 				return select.value;
+	 				}
+	 			}
+			},
+			"getValueAsUrlParam":
+			function(form, prop) {
+				var value = handler.getSelectedValue(form[prop]);
+				if (value &&  "" !== value) {
+					return "&" +  prop+ "=" + escape(value);
+				}
+				return "";
+			},
+			"responsify" : function() { handler.refreshDataTable(); },
+			"unresponsify" : function() { handler.refreshDataTable(); },
+			"refreshDataTable" :
+			function(pageSize) {
+				$j.fn.getTableDataByAJAX2(handler.getAjaxUrl(), 'json', handler.getTemplateTargets(), handler.getExtraData(), 
+						isResponsiveMode(), handler.getPostProcessDataFunction(), handler.getRestDataPropertyName(), pageSize);
+			},
+			"getAjaxUrl" : function() { throw "method getAjaxUrl undefined"; },
+			"getMustacheUrl" : function() {
+				if (!handler.mustacheUrl) {
+					throw "method getMustacheUrl undefined";
+				} else {
+					return handler.mustacheUrl;
+				}
+			},
+			"getDataTableId" : function() {
+				if (! handler.tableId) {
+					throw "method getDataTableId undefined";
+				} else {
+					return handler.tableId;
+				}
+			},
+			"getExtraData" : function() {
+				if (! handler.extraData) {
+					throw "method getExtraData undefined";
+				} else {
+					return handler.extraData;
+				}
+			},
+			"getRestDataPropertyName" : function() { if (!handler.dataJsonPropertyName) return "data"; else return  handler.dataJsonPropertyName;},
+			"getTemplateTargets" : function() {
+				return [ { 'template' : handler.getMustacheUrl(),  'tableId' : handler.getDataTableId() , 'hasNoData' : handler.hasNoData }];
+			},
+			"hasNoData" : function() {
+				return false;
+			},
+			"getPostProcessDataFunction" : function() {
+				return undefined;
+			},
+			"findInList" : function(list, predicate, defaultValue) {
+				for(var i = 0; i < list.length; i++) {
+					if (predicate(list[i])) {
+						return list[i];
+					}
+				}
+				return defaultValue;
+			},
+			"rebuildOptions" : function(select, list, getName, getValue, firstOption, selectValue) {
+				if (!selectValue) {
+					selectValue = handler.getSelectedValue(select);
+				}
+
+				select.options.length = 0;
+
+				if (firstOption) {
+					select.options.add(firstOption);
+				}
+
+				if (list) {
+					for(var i = 0; i < list.length; i++) {
+						var elt = list[i];
+						var option = new Option(getName(elt), getValue(elt));
+						if (option.value === selectValue) {
+							option.selected = true;
+						}
+						select.options.add(option);
+					}
+				}
+
+				if (select.options.length === 0) { select.disabled = true; } else { select.disabled = false; }	// disable select if no options
+
+			},
+			"drawPagination" : function(tableId, pTotal, pNumber, pageSize) {
+				if ($j.fn.addCMEPagination && (!$j('body').hasClass('cq-wcm-edit'))){
+					var existingPTotal = parseInt($j(".cmePaginationWrapper ul").attr("data-pagetotal"));	// check existing pagination page total
+					var existingPSelected = parseInt($j(".cmePaginationWrapper ul li.active").attr("data-page"));	// check existing pagination page selected
+					if ((existingPTotal !== pTotal) || (existingPSelected !== pNumber)) { // we need to redraw
+						$j(".cmePaginationWrapper").remove();
+						$j(tableId).addCMEPagination({	// call cme pagination plug in
+							"controlWrapper": ".cmeTableBlockWrapper",
+							"controlClass": "cmePaginationTable",
+							"pageTotal": pTotal,
+							"pageCurrent": pNumber,
+							"callbackFunction": "cmeTablesPaginationEventClick",
+							"pageSize": pageSize
+						});
+					}
+				}
+			},
+			"changeProductName" : function(name) {
+				$j("#productName").html(name);
+				if (window.titleSuffix) {
+					document.title = name  + " " + window.titleSuffix;
+				}
+			}
+		};
+
+		for(var method in defaultHandlerMethod) {
+			if (!handler[method]) {
+				handler[method] = defaultHandlerMethod[method];
+			}
+		}
+
+		for(var prop in value) {
+			handler[prop] = value[prop];
+		}
+
+		value.handlerObj = handler;
+
+		if (handler.init) {
+			handler.init();
+		}
+	}
+};
+
+// CHANGE MOBILE PAGE NAVIGATION SELECT VALUES TO EMBED NEW OPTIONPRODUCTID
+function updateMobileNavigation(parameterName, paramaterValue){
+	if($j('select.cmeTabsNavigation.cmeJumpMenu', '.cmeMobileJumpMenu').length){
+		$j('select.cmeTabsNavigation.cmeJumpMenu option', '.cmeMobileJumpMenu').each(function(){
+			if($j(this).val() !== "0"){
+				var myJumpMenuValue = $j(this).val();
+				if (myJumpMenuValue.indexOf(parameterName) !== -1){
+					myJumpMenuValue = changeURLParameter(myJumpMenuValue, parameterName, paramaterValue);
+				} else {
+					if(myJumpMenuValue.indexOf('?') !== -1){
+						myJumpMenuValue = myJumpMenuValue + "&" + parameterName + "=" + paramaterValue;
+					} else {
+						myJumpMenuValue = myJumpMenuValue + "?" + parameterName + "=" + paramaterValue;
+					}
+				}
+				$j(this).val(myJumpMenuValue);
+			}
+		});
+	}
+}
+
+$j(document).ready(function() {
+	if ($j(".cmeSearchBoxWrapper #searchField").length) {
+		$j(".cmeSearchBoxWrapper #searchField").bind("focus click", function() {
+			if ($j.trim(this.value) === "Search CMEGroup.com" || $j.trim(this.value) === "Please enter a valid search term(s)") {
+				$j('#searchField').val('Search CMEGroup.com').removeClass('searchRed').addClass('searchWhite');
+				this.value = '';
+			}
+		});
+		$j(".cmeSearchBoxWrapper #searchField").blur(function() {
+			if ($j.trim(this.value) === "" || $j.trim(this.value) === "Please enter a valid search term(s)") {
+				$j('#searchField').val('Search CMEGroup.com').removeClass('searchRed').addClass('searchWhite');
+				this.value = 'Search CMEGroup.com';
+			}
+		});
+
+		$j(".cmeSearchBoxWrapper #search").submit(function(){
+			var myVal = $j.trim($j('#searchField').val());
+			if (myVal === null || myVal === "" || myVal === "Search CMEGroup.com" || myVal === "Please enter a valid search term(s)") {
+				setTimeout(function(){
+					$j('#searchField').val('Please enter a valid search term(s)').removeClass('searchWhite').addClass('searchRed');
+				}, 100);
+				return false;
+			} else {
+				return true;
+			}
+		});
+	}
+
+	 $j('.cmeSearchBoxWrapper #cmeSearch').on('click', '.elc-moreResults a', function(e) {
+	    e.preventDefault();
+		e.stopPropagation();
+	}).on('tap', '.elc-moreResults a', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		//checkSearch();
+		$j("#search").submit();
+	});
+});
+$j(function(){
+  yepnope([
+	//  {
+  //  test: !$j('html').hasClass('cme-css-columns') && $j('.cmeColumnDesign').length,
+  //  yep: { 'csscolumns':'/apps/cmegroup/widgets/uncommonLibs/js/jquery.columnizer.js' },
+  //  callback: {
+  //  	'csscolumns': function(url, result, key){
+	//    	if(result){
+	//			$j('.cmeColumnDesign').each(function(){
+	//				var myColumnDesignComponent = $j(this);
+	//				var myColumnDesignContent = $j('.parsys > .section', myColumnDesignComponent);
+	//				if (myColumnDesignComponent.is(':visible')){
+	//					if(myColumnDesignComponent.hasClass('cmeTwoColumnDesign')){
+	//						myColumnDesignContent.columnize({ cssClassPrefix: "nocme", columns:2, lastNeverTallest:true });
+	//					} else if(myColumnDesignComponent.hasClass('cmeThreeColumnDesign')){
+	//						myColumnDesignContent.columnize({ cssClassPrefix: "nocme", columns:3, lastNeverTallest:true });
+	//					}
+	//				} else if(myColumnDesignComponent.parents('.cmeSecondaryNav').length) {
+	//					var myColumnDesignFlyoutContainer = myColumnDesignComponent.closest('.cmeSecondaryNav');
+	//					var myColumnDesignFlyoutParent = myColumnDesignFlyoutContainer.parent('li');
+	//					myColumnDesignFlyoutParent.one('mouseenter', function(){
+	//						if(!myColumnDesignFlyoutContainer.hasAttr('data-design-columnized')){
+	//							myColumnDesignFlyoutContainer.css({ 'display':'block' });
+	//							if(myColumnDesignComponent.hasClass('cmeTwoColumnDesign')){
+	//								myColumnDesignContent.columnize({ cssClassPrefix: "nocme", columns:2, lastNeverTallest:true, buildOnce:true});
+	//							} else if(myColumnDesignComponent.hasClass('cmeThreeColumnDesign')){
+	//								myColumnDesignContent.columnize({  cssClassPrefix: "nocme", columns:3, lastNeverTallest:true, buildOnce:true});
+	//							}
+	//						}
+	//					}).one('mouseleave', function(){
+	//						if(!myColumnDesignFlyoutContainer.hasAttr('data-design-columnized')){
+	//							myColumnDesignFlyoutContainer.css({ 'display':'' });
+	//							myColumnDesignFlyoutContainer.attr('data-design-columnized', 'true');
+	//						}
+	//					});
+	//				}
+	//			});
+	//		}
+	//	}
+	//}
+  //},
+  {
+    test: $j('html').hasClass('cme-home-landing') && $j('.cmeDelayedQuotesHomepage').length,
+    yep: { 'megaquotes':'/apps/cmegroup/widgets/uncommonLibs/js/jquery.cmeDelayedMegaQuotes.js' },
+    callback: {
+    	'megaquotes': function(url, result, key){
+	    	if(result){
+				// dynamically create new delayed quotes mega call component
+				if (!window.cmeComponents) { window.cmeComponents=[]; }
+				var component = {};
+				component.handler="cme.component.delayedmegaquotes";
+				component.visible=true;
+				component.baseUrl="/CmeWS/mvc/Quotes/Query";
+				window.cmeComponents[window.cmeComponents.length]=component;
+				
+				// init registered components (will pick up new component)
+				initRegisteredComponent();
+
+				$j.fn.startAutoUpdate(true);	// reload auto update
+				
+			}
+		}
+	}
+  },
+  {
+    test: !$j("body").hasClass("cq-wcm-edit") && $j(".cmeContentTableAdvanced, .cmeDataTableAdvanced").length,
+    yep: { 'clientsideTables':'/apps/cmegroup/widgets/uncommonLibs/js/datatables.min.js' },
+    callback: {
+    	'clientsideTables': function(url, result, key){
+	    	if(result){
+				$j(".cmeContentTableAdvanced, .cmeDataTableAdvanced").each(function(){
+					var myInteractiveTable = $j(this);
+					if (!myInteractiveTable.has("thead").length){
+						myInteractiveTable.prepend($j('<thead></thead>').append($j('tr:first', myInteractiveTable).remove()));
+					}
+					myInteractiveTable.addClass("cmeInteractiveTable");
+    			}).DataTable({
+	    			"autoWidth": false,
+					"paging":   true,
+					"pageLength": (($j("html").hasClass("cmeResponsive")) ? cmeVal.InteractiveTablePageLengthMobile() : cmeVal.InteractiveTablePageLength()),
+					"pagingType": "full_numbers",
+					"lengthChange": false,
+					"info": false,
+					"order": [[ 0, "desc" ]],
+					 "initComplete": function() {
+					 	$j(this).addDefaultResponsiveHandling();
+					 	$j(this).closest(".dataTables_wrapper").addClass("cmeClearContent");
+					 },
+					"drawCallback": function(settings) {
+						var api = this.api();
+						var pageInfo = api.page.info();
+						var myPaginationControl = $j(this).closest(".dataTables_wrapper").find('.dataTables_paginate');
+						if (pageInfo.pages > 1) {
+							myPaginationControl.removeClass("cmeHiddenToggleElement");
+						} else {
+							myPaginationControl.addClass("cmeHiddenToggleElement");
+						}
+					}
+				});				
+				$j("#cmePageWrapper").on("tap", ".paginate_button", function(){
+					var myTappedElem = $j(this);
+			        if ((!myTappedElem.hasClass("disabled")) && (!myTappedElem.hasClass("current"))) {
+			            $j('html, body').animate({ scrollTop: myTappedElem.closest(".dataTables_wrapper").offset().top }, 400);
+			        }
+			     });				
+			}
+		}
+	}
+  },
+  {
+	test: $j('html').hasClass('cme-svg') && $j('html').hasClass('cme-localstorage') && $j('.cmeDataWidgetChart').length,
+	yep: ['/apps/cmegroup/widgets/uncommonLibs/js/d3.min.js'],
+	callback: function(url, result) {
+		if (result)	{ // only fire on load
+			if (!window.cmeComponents) { window.cmeComponents=[]; }
+			for (var i = 0, len = window.cmeComponents.length; i < len; i++) {
+			    var component = window.cmeComponents[i];
+			    if (component.type !== undefined) {
+			        if (component.type == "chart") {
+				     	component.chartSupported = true;	// set chart support
+				     	if (component.handlerObj) {	// check component has handler
+							component.handlerObj.chartSupported = true;
+							if (component.handlerObj.initChart) component.handlerObj.initChart();
+				     	}
+			        }
+			    }
+			}
+		}
+	},
+	complete: function() {
+		// test to handle non-chart support
+		if ((!$j('html').hasClass('cme-svg') || !$j('html').hasClass('cme-localstorage')) && $j('.cmeDataWidgetChart').length) {
+			if (!window.cmeComponents) { window.cmeComponents=[]; }
+			for (var i = 0, len = window.cmeComponents.length; i < len; i++) {
+			    var component = window.cmeComponents[i];
+			    if (component.type !== undefined) {
+			        if (component.type == "chart") {
+				     	if (component.handlerObj) {	// check component has handler
+							if (component.handlerObj.initNonChart) component.handlerObj.initNonChart();
+				     	}
+			        }
+			    }
+			}
+		}
+	}
+  }]);
+});
+(function($j, window) {
+	$j("a").click(function(){
+	    var getRel = $j(this).attr("rel"),
+	    	getTarget = $j(this).attr("target"),
+	        getUrl = window.location.href,
+	        getLink = $j(this).attr("href");
+	    if ( getRel === "download" && getTarget === "_blank" ) {
+	    	openNewTab();
+	    } else if ( getRel === "download external" && getTarget === "_blank" ) {
+	    	openNewTab();
+	    } else if ( getRel === "external download" && getTarget === "_blank" ) {
+	    	openNewTab();
+	    }
+
+	    function openNewTab() {
+	    	window.open(getUrl, '_self');
+	        window.open(getLink, '_blank');
+	    }
+	})
+})(jQuery, window);

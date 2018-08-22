@@ -1,0 +1,78 @@
+(function($j, Mustache, _, moment, window) {
+
+    function f() {
+        var BASE_URL = '/etc/clientlibs/cmegroup/cmeAlert/';
+        var TEMPLATE_URL = BASE_URL + 'mustache/alert.html';
+        var BACKEND_URL = '/libs/cmegroup/alerts/search';
+
+        /*
+         * backend comm methods
+         */
+        function getTemplateFromServer() {
+            return $.ajax({url: TEMPLATE_URL, cache: false})
+                .error(function(e) {console.error('Error in Alert component:', e.status, e.statusText)});
+        }
+
+        function getAlertsFromServer() {
+            var that = this;
+            var url = that.options.requestURL;
+            return $.ajax({url: url, cache: false})
+                .then(function(response) {
+                    // Workaround: Not receiving application/json http response headers from Akamai
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+                    return response;
+                })
+                .fail(function(e) {console.error('Error in Alert component:', e.status, e.statusText)});
+        }
+
+        /*
+         * Model-to-View methods
+         */
+        function render() {
+            var that = this;
+
+            var template;
+            return getTemplateFromServer.call(that).then(function(templateFromServer) {
+                template = templateFromServer;
+                return getAlertsFromServer.call(that);
+            }).then(function(alertsFromServer) {
+                var context = {
+                    alerts: alertsFromServer,
+                    editMode: that.options.editMode,
+                    formatDate: formatDate
+                };
+                context.alerts = _.map(context.alerts, function(item) {
+                    return _.extend(item, {
+                        isCmeGCCSeriousAlertMessage: item.style == 'cmeGCCSeriousAlertMessage'
+                    });
+                });
+                var html = Mustache.to_html(template, context);
+                $j(that).html(html);
+            });
+        }
+        function formatDate() {
+            return function(val, render) {
+                var renderedVal = render(val);
+                var momentDate = moment(renderedVal);
+                var formattedDate = momentDate.format('MMM DD HH:mm A');
+                return renderedVal;
+            };
+        }
+
+        // Plugin setup
+		if (!$j.fn.cmeAlert) {
+			$j.fn.extend({
+				cmeAlert: function(options) {
+                    var that = this;
+                    this.options = options;
+                    this.$el = $j(this);
+                    render.call(that)
+                    return this;
+				}
+			});
+		}
+	}
+	$j(f);
+})(jQuery, Mustache, _, moment, window);

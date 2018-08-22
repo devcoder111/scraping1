@@ -1,0 +1,234 @@
+(function($j) {
+    var $ = $j;
+
+    $j(function() {
+        function resetNav(userConfig) {
+            var options = {
+                force: false
+            };
+            $j.extend(options, userConfig);
+
+            if (options.force || !$j('.cmeNavOpen').length) {
+                $j('.cmePrimaryNav > li')
+                    .children('a')
+                    .css('color', '#fff');
+            }
+        };
+
+        // Dimming of not focused items on nav bar
+        (function() {
+            resetNav();
+
+            $j('.cmePrimaryNav').on('mouseenter', '> li', function() {
+                $j(this)
+                    .siblings()
+                    .children('a')
+                    .css('color', '#999');
+                $j(this)
+                    .children('a')
+                    .css('color', '#fff');
+            });
+        })();
+
+        (function() {
+            if ($j('.parsys-header').length) {
+                $j('#cmePageContentArea').addClass('contentWithParsysHeader');
+            }
+        })();
+
+        // Searchbox Expander/Expanded
+        (function() {
+            $j('.searchExpander').on('click', function(){
+                $j('#cmePineappleHeaderContainer #cmeHeader .regionalSites').hide("slide", { direction: "right" }, 100);
+                t = setTimeout(function() {
+                    $j('#cmeSearch').toggleClass('cmeSearchDisplayed');
+                    $j('.searchExpander').toggleClass('searchExpanderExpanded');
+                    if($j(this).hasClass('searchExpanderExpanded')){
+                        $j('#cmeSearch').find('input[type="text"]').focus();
+                    } else {
+                        $j('#cmePineappleHeaderContainer #cmeHeader .regionalSites').show();
+                    }
+                }, 100);
+            });
+        })();
+        
+        // Set logged in user name
+        (function() {
+            $j('.logged-in-welcome > b').text(typeof cmeAjax !== 'undefined' && cmeAjax.loginInfo ? (cmeAjax.loginInfo.userName!='' && cmeAjax.loginInfo.userName!=undefined ? ', ' + cmeAjax.loginInfo.userName : ''): 'Anonymous');
+        })();
+
+        // Delay on flyouts display
+        (function() {
+            var t = null;
+
+            // desktop
+            $j('#cmeNav').hover(function() {
+                $j(this).addClass('cmeNavOpen');
+            }, function() {
+                $j('#cmeNav').removeClass('cmeNavOpen', resetNav);
+            });
+
+            $j('.cmePrimaryNav > li').each(function() {
+                var li = $j(this);
+
+            	if ($('html').hasClass('cme-ipad')) {
+            		li.on('touchstart', function(event) {
+            			event.stopPropagation();
+
+            			$j('.cmePrimaryNav > li').removeClass('hovered');
+            			li.addClass('hovered').find('> a').removeClass('not-hovered');
+
+            			$('#cmeNav').addClass('cmeNavOpen');
+            			$j('.cmeSecondaryNav').hide();
+                        li.find('.cmeSecondaryNav').show();
+
+                        $j('body').on('touchstart.closeFlyouts', function() {
+                			if ($j('#cmeNav').hasClass('cmeNavOpen')) {
+                				$j('.cmeSecondaryNav').hide();
+                				$j('.cmePrimaryNav > li')
+                					.removeClass('hovered')
+                					.find('> a').addClass('not-hovered');
+
+                				resetNav({force: true});
+                				$j('#cmeNav').removeClass('cmeNavOpen');
+
+                				$j('body').off('.closeFlyouts');
+                			}
+            			});
+            		});
+            	}
+
+                li.hover(function() {
+                    if ($j('#cmeNav').hasClass('cmeNavOpen')) {
+                        $j('.cmeSecondaryNav').hide();
+                        li.find(".cmeSecondaryNav").show();
+                    } else {
+                        t = setTimeout(function() {
+                            li.find(".cmeSecondaryNav").slideDown(300);
+                            $j('#cmeNav').addClass('cmeNavOpen');
+                            t = null;
+                        }, 400);
+                    }
+                }, function() {
+                    if (t) {
+                        clearTimeout(t);
+                        t = null;
+                        resetNav({force: true});
+                    } else
+                        li.find(".cmeSecondaryNav").slideUp(200, resetNav);
+                });
+            });
+
+            $j('#cmeMenuLogin').hover(function() {
+                t = setTimeout(function() {
+                    $j('#cmeMenuLogin ul').slideDown(300);
+                    t = null;
+                }, 300);
+            }, function() {
+                if (t) {
+                    clearTimeout(t);
+                    t = null;
+                } else
+                    $j('#cmeMenuLogin ul').slideUp(200);
+            });
+            
+            (function() {
+                var t;
+                $j('#cmePineappleHeaderContainer #cmeHeader .regionalSites').hover(function() {
+                    t = setTimeout(function() {
+                        $j('#cmePineappleHeaderContainer #cmeHeader .regionalSites .popup').show();
+                        t = null;
+                    }, 10);
+                }, function() {
+                    if (t) {
+                        clearTimeout(t);
+                        t = null;
+                    } else {
+                        $j('#cmePineappleHeaderContainer #cmeHeader .regionalSites .popup').hide();
+                    }
+                });
+            })()
+
+            if ($j('html').hasClass('cme-ipad')) {
+                $j('#cmeMenuLogin').on('touchstart', function(event) {
+                    event.stopPropagation();
+
+                    $j('#cmeMenuLogin')
+                        .find('a')
+                            .removeClass('not-hovered')
+                            .end()
+                        .find('ul')
+                            .slideDown();
+
+                    $j('body').on('touchstart.closeMenuLogin', function() {
+                        $j('#cmeMenuLogin')
+                            .find('ul')
+                                .slideUp()
+                                .end()
+                            .find('a')
+                                .addClass('not-hovered');
+
+                        $j('body').off('.closeMenuLogin');
+                    });
+                });
+            }
+        })();
+
+        // Remove elicit search placeholder on click
+        (function() {
+            var togglePlaceholder = function(el, toggle) {
+                return function() {
+                    $j(this).siblings('.elc-hint-placeholder')[toggle]();
+                };
+            };
+
+            $j('.cmePineappleHeader')
+                .on('focus', '.elc-search .elc-searchInput', togglePlaceholder(this, 'hide'))
+                .on('blur', '.elc-search .elc-searchInput', togglePlaceholder(this, 'show'));
+        })();
+
+        // Make external pages html #anchors visible avoiding them to hide below fixed Pineapple navbar
+        (function() {
+            $j('.cmeTabs .cmeTabsNavigation li a').on('click', function(event){
+                delayedFragmentTargetOffset($j(event.target));
+            });
+
+            // add scroll offset to fragment target (if there is one)
+            function delayedFragmentTargetOffset($el){
+                var offset = $el.offset();
+                if(offset){
+                    var scrollto = offset.top - 50; // minus fixed header height
+                    $j('html, body').animate({scrollTop:scrollto}, 0);
+                }
+            }
+        })();
+
+        // Change google's custom search default search icon to one of our owns
+        (function() {
+            if ($j('#cmeHeader').hasClass('theme-microsites')===true) {
+                $j.extend(window.__gcse, {callback: function() {
+                    $j('.gsc-search-button input').attr( "src", "/etc/clientlibs/cmegroup/cmegroupClientLibs/images/gcs-search-icon-black.png" );
+                    }
+                });
+            }
+            else {
+                $j.extend(window.__gcse, {callback: function() {
+                    $j('.gsc-search-button input').attr( "src", "/etc/clientlibs/cmegroup/cmegroupClientLibs/images/gcs-search-icon.png" );
+                    }
+                });
+            }
+        })();
+
+        // Move shadow to subnav instead of being on primary nav when the subnav is visible
+        (function() {
+            if ($j('.cmeLegendaryNav').length) {
+                $j('.navbar-primary, .cmeLegendaryNav, #cmeHeader').addClass('SubNavIsVisible');
+            } else {
+                $j('.navbar-primary, .cmeLegendaryNav, #cmeHeader').removeClass('SubNavIsVisible');
+            }
+            if ($j('.navbar-primary').length) {
+                $j('body').addClass('cmeHasPrimaryNav');
+            }
+        })();
+    });
+})(jQuery);

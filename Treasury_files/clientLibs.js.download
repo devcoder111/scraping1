@@ -1,0 +1,33 @@
+var gptadslots=[];
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function(){ var gads = document.createElement('script');
+	gads.async = true; gads.type = 'text/javascript';
+	var useSSL = 'https:' == document.location.protocol;
+	gads.src = (useSSL ? 'https:' : 'http:') + '//www.googletagservices.com/tag/js/gpt.js';
+	var node = document.getElementsByTagName('script')[0];
+	node.parentNode.insertBefore(gads, node);
+})();
+
+googletag.cmd.push(function() {
+
+	//Adslot 1 declaration
+	gptadslots[1]= googletag.defineSlot('/6608/CME', [[728,90],[970,90],[970,250]],'div-gpt-ad-411916434793162791-1').addService(googletag.pubads());
+
+	//Adslot 2 declaration
+	gptadslots[2]= googletag.defineSlot('/6608/CME', [[160,600]],'div-gpt-ad-411916434793162791-2').addService(googletag.pubads());
+
+	//Adslot 3 declaration
+	gptadslots[3]= googletag.defineSlot('/6608/CME', [[320,50]],'div-gpt-ad-411916434793162791-3').addService(googletag.pubads());
+
+	//Adslot 4 declaration
+	gptadslots[4]= googletag.defineSlot('/6608/CME', [[244,100]],'div-gpt-ad-411916434793162791-4').addService(googletag.pubads());
+
+	//Adslot 5 declaration
+	gptadslots[5]= googletag.defineSlot('/6608/CME', [[728,90],[970,90]],'div-gpt-ad-778989764059644114-5').setTargeting('pos',['fixed']).addService(googletag.pubads());
+
+	
+	googletag.pubads().collapseEmptyDivs()
+	googletag.pubads().enableAsyncRendering();
+	googletag.enableServices();
+});
